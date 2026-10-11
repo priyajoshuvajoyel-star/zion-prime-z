@@ -90,7 +90,7 @@
             const botMsgDiv = appendMessage("bot", "Thinking...");
 
             try {
-                const res = await fetch('/chat', {
+                const res = await fetch('https://zion-prime-z.onrender.com/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: prompt, image: currentImg })
@@ -135,7 +135,7 @@
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             document.getElementById('chat-box').innerHTML = '';
             localStorage.removeItem('zion_chat_history');
-            fetch('/clear', { method: 'POST' });
+            fetch('https://zion-prime-z.onrender.com/clear', { method: 'POST' });
         }
 
         function saveHistory() {
