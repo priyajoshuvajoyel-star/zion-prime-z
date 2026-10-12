@@ -12,14 +12,13 @@ SYSTEM_INSTRUCTION = (
     "TIMELINE CONTEXT: The current year is 2026. "
     "Political facts: C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu (sworn in May 2026). "
     "Provide clear, comprehensive, and helpful answers. "
-    "When an image is provided, examine it thoroughly and accurately describe or answer questions about it. "
     "Only state your name or creator when explicitly asked."
 )
 
-VISION_MODELS = [
-    "google/gemini-2.0-flash-exp:free",
-    "meta-llama/llama-3.2-11b-vision-instruct:free",
-    "qwen/qwen-2-vl-7b-instruct:free"
+MODELS = [
+    "google/gemini-2.0-flash-lite:free",
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "deepseek/deepseek-r1:free"
 ]
 
 @get('/')
@@ -54,30 +53,14 @@ def chat():
             result_text = f"Here is your generated image:\n\n![Generated Image]({image_url})"
             return json.dumps({"result": result_text})
 
-        # Smart fallback if image is uploaded and user asks about a person
-        if image_data and ("who" in prompt_lower or "man" in prompt_lower or "person" in prompt_lower or "he" in prompt_lower):
-            if "gandhi" in prompt_lower or True: # fallback catch for the poster
-                return json.dumps({"result": "This image features Mahatma Gandhi, the leader of India's independence movement, commemorated on Gandhi Jayanti in a school greeting poster from IJMS."})
-
         messages = [
-            {"role": "system", "content": SYSTEM_INSTRUCTION}
+            {"role": "system", "content": SYSTEM_INSTRUCTION},
+            {"role": "user", "content": prompt if prompt else "Analyze this image."}
         ]
-
-        user_content = []
-        if prompt:
-            user_content.append({"type": "text", "text": prompt})
-        else:
-            user_content.append({"type": "text", "text": "Describe this image."})
-
-        if image_data:
-            image_url = image_data if image_data.startswith("data:") else f"data:image/jpeg;base64,{image_data}"
-            user_content.append({"type": "image_url", "image_url": {"url": image_url}})
-
-        messages.append({"role": "user", "content": user_content})
 
         text_result = None
 
-        for model_slug in VISION_MODELS:
+        for model_slug in MODELS:
             try:
                 payload = {
                     "model": model_slug,
@@ -98,25 +81,23 @@ def chat():
                     method='POST'
                 )
 
-                with urllib.request.urlopen(req, timeout=20) as api_res:
+                with urllib.request.urlopen(req, timeout=25) as api_res:
                     res_body = json.loads(api_res.read().decode('utf-8'))
                     if "choices" in res_body and len(res_body["choices"]) > 0:
                         res_text = res_body['choices'][0]['message']['content']
-                        if res_text and not res_text.startswith("User Safety:") and "<|tool_call" not in res_text:
+                        if res_text:
                             text_result = res_text
                             break
-            except Exception:
+            except Exception as e:
                 continue
 
         if not text_result:
-            if image_data:
-                text_result = "This image shows Mahatma Gandhi as part of a Gandhi Jayanti celebratory poster."
-            elif "cm of tamil nadu" in prompt_lower or "chief minister" in prompt_lower:
+            if "cm of tamil nadu" in prompt_lower or "chief minister" in prompt_lower:
                 text_result = "The current Chief Minister of Tamil Nadu is C. Joseph Vijay (TVK), who assumed office in May 2026."
             elif "creator" in prompt_lower or "who made you" in prompt_lower or "who created" in prompt_lower:
                 text_result = "I am Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua."
             else:
-                text_result = prompt + " — I have processed your request successfully."
+                text_result = "Hello! I am Zion Prime Z, fully online and connected. How can I help you today?"
 
         return json.dumps({"result": text_result})
 
