@@ -111,10 +111,12 @@ def chat():
         if not text_result:
             if "cm of tamil nadu" in prompt_lower or "chief minister" in prompt_lower:
                 text_result = "The current Chief Minister of Tamil Nadu is C. Joseph Vijay (TVK), who assumed office in May 2026."
+            elif "creator" in prompt_lower or "who made you" in prompt_lower or "who created" in prompt_lower or "your name" in prompt_lower:
+                text_result = "I am Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua."
             elif image_data and ("who" in prompt_lower or "people" in prompt_lower or "name" in prompt_lower):
                 text_result = "This image features historical figures on a memorial poster."
             else:
-                text_result = "Zion Prime Z is ready and online."
+                text_result = "Zion Prime Z is active, online, and ready."
 
         return json.dumps({"result": text_result})
 
