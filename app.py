@@ -11,15 +11,15 @@ SYSTEM_INSTRUCTION = (
     "You are Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua. "
     "TIMELINE CONTEXT: The current year is 2026. "
     "Political facts: C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu (sworn in May 2026). "
-    "INSTRUCTIONS: Respond extremely briefly (1-2 sentences max). "
-    "Identify famous historical figures, text, or objects described in the prompt accurately and naturally. "
+    "Provide clear, comprehensive, and helpful answers. "
+    "When an image is provided, examine it thoroughly and accurately describe or answer questions about it. "
     "Only state your name or creator when explicitly asked."
 )
 
 VISION_MODELS = [
-    "google/gemma-4-31b-it:free",
-    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-    "openrouter/free"
+    "meta-llama/llama-3.2-11b-vision-instruct:free",
+    "google/gemini-2.0-flash-exp:free",
+    "qwen/qwen-2-vl-7b-instruct:free"
 ]
 
 @get('/')
@@ -47,7 +47,7 @@ def chat():
         prompt_lower = prompt.lower().strip()
 
         # Image Generation Interceptor
-        image_keywords = ("generate", "generator", "draw", "create an image", "make an image", "image of", "can generate")
+        image_keywords = ("generate", "generator", "draw", "create an image", "make an image", "image of")
         if any(kw in prompt_lower for kw in image_keywords):
             encoded_prompt = urllib.parse.quote(prompt)
             image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true"
@@ -98,7 +98,7 @@ def chat():
                     method='POST'
                 )
 
-                with urllib.request.urlopen(req, timeout=12) as api_res:
+                with urllib.request.urlopen(req, timeout=15) as api_res:
                     res_body = json.loads(api_res.read().decode('utf-8'))
                     if "choices" in res_body and len(res_body["choices"]) > 0:
                         res_text = res_body['choices'][0]['message']['content']
@@ -113,10 +113,8 @@ def chat():
                 text_result = "The current Chief Minister of Tamil Nadu is C. Joseph Vijay (TVK), who assumed office in May 2026."
             elif "creator" in prompt_lower or "who made you" in prompt_lower or "who created" in prompt_lower or "your name" in prompt_lower:
                 text_result = "I am Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua."
-            elif image_data and ("who" in prompt_lower or "people" in prompt_lower or "name" in prompt_lower):
-                text_result = "This image features historical figures on a memorial poster."
             else:
-                text_result = "Zion Prime Z is active, online, and ready."
+                text_result = "I received your request, but the vision service experienced a temporary delay. Please try sending your query again."
 
         return json.dumps({"result": text_result})
 
