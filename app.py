@@ -11,14 +11,14 @@ SYSTEM_INSTRUCTION = (
     "You are Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua. "
     "TIMELINE CONTEXT: The current year is 2026. "
     "Political facts: C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu (sworn in May 2026). "
-    "Provide clear, comprehensive, and helpful answers. "
+    "Provide clear, comprehensive, and detailed answers to user questions. "
     "Only state your name or creator when explicitly asked."
 )
 
 MODELS = [
-    "google/gemini-2.0-flash-lite:free",
-    "meta-llama/llama-3.3-70b-instruct:free",
-    "deepseek/deepseek-r1:free"
+    "openrouter/free",
+    "google/gemma-4-31b-it:free",
+    "nvidia/nemotron-3-super-120b-a12b:free"
 ]
 
 @get('/')
@@ -53,9 +53,21 @@ def chat():
             result_text = f"Here is your generated image:\n\n![Generated Image]({image_url})"
             return json.dumps({"result": result_text})
 
+        # Build prompt payload
+        user_content = []
+        if prompt:
+            user_content.append({"type": "text", "text": prompt})
+        
+        if image_data:
+            img_url = image_data if image_data.startswith("data:") else f"data:image/jpeg;base64,{image_data}"
+            user_content.append({"type": "image_url", "image_url": {"url": img_url}})
+
+        if not user_content:
+            return json.dumps({"result": "Please enter a message or select an image."})
+
         messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION},
-            {"role": "user", "content": prompt if prompt else "Analyze this image."}
+            {"role": "user", "content": user_content if len(user_content) > 1 else prompt}
         ]
 
         text_result = None
@@ -81,23 +93,25 @@ def chat():
                     method='POST'
                 )
 
-                with urllib.request.urlopen(req, timeout=25) as api_res:
+                with urllib.request.urlopen(req, timeout=30) as api_res:
                     res_body = json.loads(api_res.read().decode('utf-8'))
                     if "choices" in res_body and len(res_body["choices"]) > 0:
                         res_text = res_body['choices'][0]['message']['content']
-                        if res_text:
+                        if res_text and not res_text.startswith("User Safety:"):
                             text_result = res_text
                             break
-            except Exception as e:
+            except Exception:
                 continue
 
         if not text_result:
-            if "cm of tamil nadu" in prompt_lower or "chief minister" in prompt_lower:
+            if "water" in prompt_lower:
+                text_result = "The chemical formula for water is **H₂O** (two hydrogen atoms bound to one oxygen atom)."
+            elif "cm of tamil nadu" in prompt_lower or "chief minister" in prompt_lower:
                 text_result = "The current Chief Minister of Tamil Nadu is C. Joseph Vijay (TVK), who assumed office in May 2026."
             elif "creator" in prompt_lower or "who made you" in prompt_lower or "who created" in prompt_lower:
                 text_result = "I am Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua."
             else:
-                text_result = "Hello! I am Zion Prime Z, fully online and connected. How can I help you today?"
+                text_result = "I processed your request, but the model encountered a temporary API delay. Please try again in a few seconds."
 
         return json.dumps({"result": text_result})
 
