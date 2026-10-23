@@ -44,9 +44,11 @@ def chat():
         image_data = data.get('image', None)
         prompt_lower = prompt.lower().strip()
 
-        # 1. IMAGE CREATION & EDITING INTERCEPTOR
-        image_keywords = ("generate image", "draw an image", "create an image", "make an image", "image of", "edit image", "modify image")
-        if any(kw in prompt_lower for kw in image_keywords) and not image_data:
+        # 1. SMART IMAGE INTERCEPTOR (Handles typos & variations)
+        image_triggers = ("image", "picture", "draw", "photo", "generate", "create")
+        is_image_request = ("image" in prompt_lower or "picture" in prompt_lower or "draw" in prompt_lower) and any(w in prompt_lower for w in ("generate", "create", "make", "draw", "an", "a", "of"))
+
+        if is_image_request and not image_data:
             encoded_prompt = urllib.parse.quote(prompt)
             image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true"
             result_text = f"Here is your generated image based on your request:\n\n![Generated Image]({image_url})"
