@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZION PRIME Z</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #0b1325; color: #fff; height: 100vh; display: flex; flex-direction: column; }
@@ -12,11 +14,16 @@
         .header h1 { font-size: 18px; color: #38bdf8; letter-spacing: 1px; }
         .clear-btn { background-color: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .message { max-width: 85%; padding: 12px 16px; border-radius: 12px; line-height: 1.5; font-size: 15px; word-wrap: break-word; }
+        .message { max-width: 90%; padding: 12px 16px; border-radius: 12px; line-height: 1.5; font-size: 15px; word-wrap: break-word; }
         .user-message { background-color: #0284c7; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .bot-message { background-color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 3px solid #38bdf8; }
+        .bot-message { background-color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 3px solid #38bdf8; overflow-x: auto; }
         .bot-message img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: block; border: 1px solid #38bdf8; }
         
+        /* Code Block Styling */
+        pre { background: #0d1117; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 10px 0; border: 1px solid #30363d; }
+        code { font-family: "Fira Code", Consolas, Monaco, monospace; font-size: 14px; }
+        p code { background: #0d1117; padding: 2px 6px; border-radius: 4px; color: #38bdf8; }
+
         .preview-container { padding: 5px 15px; background: #0f192e; display: none; }
         .preview-container img { height: 60px; border-radius: 6px; border: 1px solid #38bdf8; }
 
@@ -39,16 +46,12 @@
     </div>
 
     <div class="input-container">
-        <!-- Image Upload Button -->
         <label for="imageInput" class="icon-btn">📎</label>
         <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
         
         <input type="text" id="prompt" class="input-box" placeholder="Type prompt..." onkeydown="if(event.key==='Enter') sendMessage()">
         
-        <!-- Speech to Text Mic Button -->
         <button class="icon-btn" onclick="startSpeechRecognition()">🎤</button>
-        
-        <!-- Send Button -->
         <button class="send-btn" onclick="sendMessage()">➤</button>
     </div>
 
@@ -70,8 +73,8 @@
 
         function speakText(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop prior speech
-                const cleanText = text.replace(/!\[.*?\]\(.*?\)/g, '').replace(/[*_#`]/g, ''); // strip markdown
+                window.speechSynthesis.cancel();
+                const cleanText = text.replace(/!\[.*?\]\(.*?\)/g, '').replace(/```[\s\S]*?```/g, 'Code block outputted.').replace(/[*_#]/g, '');
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.rate = 1.0;
                 window.speechSynthesis.speak(utterance);
@@ -107,7 +110,6 @@
             
             const payload = { prompt: text, image: selectedBase64Image };
 
-            // Reset input and preview
             input.value = '';
             selectedBase64Image = null;
             document.getElementById('previewContainer').style.display = 'none';
@@ -126,9 +128,14 @@
                 });
                 const data = await res.json();
                 const renderedHtml = marked.parse(data.result);
-                document.getElementById(loadingId).innerHTML = `<b>Zion Prime Z:</b><br>${renderedHtml}`;
+                const botElement = document.getElementById(loadingId);
+                botElement.innerHTML = `<b>Zion Prime Z:</b><br>${renderedHtml}`;
                 
-                // Read response out loud
+                // Highlight code blocks
+                botElement.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+
                 speakText(data.result);
 
             } catch (err) {
