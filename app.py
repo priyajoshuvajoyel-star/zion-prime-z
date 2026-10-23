@@ -72,11 +72,12 @@ def chat():
             {"role": "user", "content": user_content}
         ]
 
-        # 3. RELIABLE PROVIDER CASCADE (with 30s timeout & error tracking)
+        # 3. REORDERED PROVIDER CASCADE (OpenRouter & CometAPI prioritized)
         providers = [
-            (OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o-mini"),
-            (OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o"),
-            (OPENROUTER_KEY, "https://openrouter.ai/api/v1/chat/completions", "google/gemini-2.0-flash-exp:free")
+            (OPENROUTER_KEY, "https://openrouter.ai/api/v1/chat/completions", "google/gemini-2.0-flash-exp:free"),
+            (COMET_KEY, "https://api.cometapi.com/v1/chat/completions", "gpt-4o"),
+            (COMET_KEY, "https://api.cometapi.com/v1/chat/completions", "claude-3-5-sonnet"),
+            (OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o-mini")
         ]
 
         text_result = None
