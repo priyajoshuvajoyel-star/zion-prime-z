@@ -1,5 +1,6 @@
 import os
 import json
+import random
 import urllib.request
 import urllib.parse
 import bottle
@@ -44,13 +45,13 @@ def chat():
         image_data = data.get('image', None)
         prompt_lower = prompt.lower().strip()
 
-        # 1. SMART IMAGE INTERCEPTOR (Handles typos & variations)
-        image_triggers = ("image", "picture", "draw", "photo", "generate", "create")
+        # 1. SMART IMAGE INTERCEPTOR (With random seed)
         is_image_request = ("image" in prompt_lower or "picture" in prompt_lower or "draw" in prompt_lower) and any(w in prompt_lower for w in ("generate", "create", "make", "draw", "an", "a", "of"))
 
         if is_image_request and not image_data:
             encoded_prompt = urllib.parse.quote(prompt)
-            image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true"
+            seed = random.randint(1, 999999)
+            image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&seed={seed}"
             result_text = f"Here is your generated image based on your request:\n\n![Generated Image]({image_url})"
             return json.dumps({"result": result_text})
 
