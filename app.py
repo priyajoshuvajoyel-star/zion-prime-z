@@ -5,21 +5,20 @@ import urllib.parse
 import bottle
 from bottle import run, post, get, request, response, static_file
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+OPENAI_KEY = os.environ.get("OPENAI_API_KEY", "")
+COMET_KEY = os.environ.get("COMETAPI_KEY", "")
+OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 
 SYSTEM_INSTRUCTION = (
     "You are Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua. "
     "TIMELINE CONTEXT: The current year is 2026. "
     "Political facts: C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu (sworn in May 2026). "
-    "Provide clear, comprehensive, and detailed answers to user questions. "
-    "Only state your name or creator when explicitly asked."
+    "SPECIALTIES & INSTRUCTIONS:\n"
+    "1. Coding: Provide complete, runnable code inside markdown blocks with clear explanations.\n"
+    "2. Vision & Analysis: Describe attached images with rich detail and visual accuracy.\n"
+    "3. Current Affairs & Knowledge: Provide thorough, well-reasoned answers on real-world events and science.\n"
+    "Only mention your identity or creator when explicitly asked."
 )
-
-MODELS = [
-    "openrouter/free",
-    "google/gemma-4-31b-it:free",
-    "nvidia/nemotron-3-super-120b-a12b:free"
-]
 
 @get('/')
 def index():
@@ -45,15 +44,15 @@ def chat():
         image_data = data.get('image', None)
         prompt_lower = prompt.lower().strip()
 
-        # Image Generation Interceptor
-        image_keywords = ("generate", "generator", "draw", "create an image", "make an image", "image of")
+        # 1. IMAGE CREATION & EDITING INTERCEPTOR
+        image_keywords = ("generate image", "draw an image", "create an image", "make an image", "image of", "edit image", "modify image")
         if any(kw in prompt_lower for kw in image_keywords) and not image_data:
             encoded_prompt = urllib.parse.quote(prompt)
             image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true"
-            result_text = f"Here is your generated image:\n\n![Generated Image]({image_url})"
+            result_text = f"Here is your generated image based on your request:\n\n![Generated Image]({image_url})"
             return json.dumps({"result": result_text})
 
-        # Build prompt payload
+        # 2. MULTI-MODAL CONTENT PAYLOAD
         user_content = []
         if prompt:
             user_content.append({"type": "text", "text": prompt})
@@ -67,51 +66,57 @@ def chat():
 
         messages = [
             {"role": "system", "content": SYSTEM_INSTRUCTION},
-            {"role": "user", "content": user_content if len(user_content) > 1 else prompt}
+            {"role": "user", "content": user_content}
+        ]
+
+        # 3. SPECIALIZED PROVIDER CASCADE
+        providers = [
+            (OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o"),
+            (OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o-mini"),
+            (COMET_KEY, "https://api.cometapi.com/v1/chat/completions", "gpt-4o"),
+            (COMET_KEY, "https://api.cometapi.com/v1/chat/completions", "claude-3-5-sonnet"),
+            (OPENROUTER_KEY, "https://openrouter.ai/api/v1/chat/completions", "google/gemini-2.0-flash-exp:free")
         ]
 
         text_result = None
 
-        for model_slug in MODELS:
+        for api_key, endpoint_url, model_name in providers:
+            if not api_key:
+                continue
             try:
                 payload = {
-                    "model": model_slug,
-                    "messages": messages
+                    "model": model_name,
+                    "messages": messages,
+                    "max_tokens": 2000
                 }
 
-                url = "https://openrouter.ai/api/v1/chat/completions"
-                
+                req_headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {api_key}'
+                }
+                if "openrouter" in endpoint_url:
+                    req_headers['HTTP-Referer'] = 'https://render.com'
+                    req_headers['X-Title'] = 'Zion Prime Z'
+
                 req = urllib.request.Request(
-                    url,
+                    endpoint_url,
                     data=json.dumps(payload).encode('utf-8'),
-                    headers={
-                        'Content-Type': 'application/json',
-                        'Authorization': f'Bearer {OPENROUTER_API_KEY}',
-                        'HTTP-Referer': 'https://render.com',
-                        'X-Title': 'Zion Prime Z'
-                    },
+                    headers=req_headers,
                     method='POST'
                 )
 
-                with urllib.request.urlopen(req, timeout=30) as api_res:
+                with urllib.request.urlopen(req, timeout=25) as api_res:
                     res_body = json.loads(api_res.read().decode('utf-8'))
                     if "choices" in res_body and len(res_body["choices"]) > 0:
                         res_text = res_body['choices'][0]['message']['content']
-                        if res_text and not res_text.startswith("User Safety:"):
+                        if res_text:
                             text_result = res_text
                             break
             except Exception:
                 continue
 
         if not text_result:
-            if "water" in prompt_lower:
-                text_result = "The chemical formula for water is **H₂O** (two hydrogen atoms bound to one oxygen atom)."
-            elif "cm of tamil nadu" in prompt_lower or "chief minister" in prompt_lower:
-                text_result = "The current Chief Minister of Tamil Nadu is C. Joseph Vijay (TVK), who assumed office in May 2026."
-            elif "creator" in prompt_lower or "who made you" in prompt_lower or "who created" in prompt_lower:
-                text_result = "I am Zion Prime Z, an advanced multimodal AI assistant created by Master S. Joshua."
-            else:
-                text_result = "I processed your request, but the model encountered a temporary API delay. Please try again in a few seconds."
+            text_result = "I received your request, but the multi-engine API services experienced a brief timeout. Please try again."
 
         return json.dumps({"result": text_result})
 
