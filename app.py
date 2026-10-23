@@ -15,7 +15,7 @@ SYSTEM_INSTRUCTION = (
     "TIMELINE CONTEXT: The current year is 2026. "
     "Political facts: C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu (sworn in May 2026). "
     "SPECIALTIES & INSTRUCTIONS:\n"
-    "1. Coding: Provide complete, runnable code inside markdown code blocks ```python with clear explanations.\n"
+    "1. Coding: Provide complete, runnable code inside markdown code blocks with clear explanations.\n"
     "2. Vision & Analysis: Describe attached images with rich detail and visual accuracy.\n"
     "3. Current Affairs & Knowledge: Provide thorough, well-reasoned answers on real-world events and science.\n"
     "Only mention your identity or creator when explicitly asked."
@@ -51,7 +51,7 @@ def chat():
         if is_image_request and not image_data:
             encoded_prompt = urllib.parse.quote(prompt)
             seed = random.randint(1, 999999)
-            image_url = f"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){encoded_prompt}?width=1024&height=1024&nologo=true&seed={seed}"
+            image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&seed={seed}"
             result_text = f"Here is your generated image based on your request:\n\n![Generated Image]({image_url})"
             return json.dumps({"result": result_text})
 
@@ -72,16 +72,15 @@ def chat():
             {"role": "user", "content": user_content}
         ]
 
-        # 3. FAST CASCADE ROUTING
+        # 3. RELIABLE PROVIDER CASCADE (with 30s timeout & error tracking)
         providers = [
-            (OPENAI_KEY, "[https://api.openai.com/v1/chat/completions](https://api.openai.com/v1/chat/completions)", "gpt-4o-mini"),
-            (OPENAI_KEY, "[https://api.openai.com/v1/chat/completions](https://api.openai.com/v1/chat/completions)", "gpt-4o"),
-            (COMET_KEY, "[https://api.cometapi.com/v1/chat/completions](https://api.cometapi.com/v1/chat/completions)", "gpt-4o"),
-            (COMET_KEY, "[https://api.cometapi.com/v1/chat/completions](https://api.cometapi.com/v1/chat/completions)", "claude-3-5-sonnet"),
-            (OPENROUTER_KEY, "[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)", "google/gemini-2.0-flash-exp:free")
+            (OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o-mini"),
+            (OPENAI_KEY, "https://api.openai.com/v1/chat/completions", "gpt-4o"),
+            (OPENROUTER_KEY, "https://openrouter.ai/api/v1/chat/completions", "google/gemini-2.0-flash-exp:free")
         ]
 
         text_result = None
+        last_error = "No API keys configured or all providers failed."
 
         for api_key, endpoint_url, model_name in providers:
             if not api_key:
@@ -98,7 +97,7 @@ def chat():
                     'Authorization': f'Bearer {api_key}'
                 }
                 if "openrouter" in endpoint_url:
-                    req_headers['HTTP-Referer'] = '[https://render.com](https://render.com)'
+                    req_headers['HTTP-Referer'] = 'https://render.com'
                     req_headers['X-Title'] = 'Zion Prime Z'
 
                 req = urllib.request.Request(
@@ -108,23 +107,24 @@ def chat():
                     method='POST'
                 )
 
-                with urllib.request.urlopen(req, timeout=10) as api_res:
+                with urllib.request.urlopen(req, timeout=30) as api_res:
                     res_body = json.loads(api_res.read().decode('utf-8'))
                     if "choices" in res_body and len(res_body["choices"]) > 0:
                         res_text = res_body['choices'][0]['message']['content']
                         if res_text:
                             text_result = res_text
                             break
-            except Exception:
+            except Exception as err:
+                last_error = str(err)
                 continue
 
         if not text_result:
-            text_result = "I received your request, but the multi-engine API services experienced a brief timeout. Please try again."
+            text_result = f"API Error Debug: {last_error}"
 
         return json.dumps({"result": text_result})
 
     except Exception as e:
-        return json.dumps({"result": f"Error: {str(e)}"})
+        return json.dumps({"result": f"Server Error: {str(e)}"})
 
 app = bottle.default_app()
 
