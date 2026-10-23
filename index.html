@@ -16,9 +16,14 @@
         .user-message { background-color: #0284c7; align-self: flex-end; border-bottom-right-radius: 2px; }
         .bot-message { background-color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 3px solid #38bdf8; }
         .bot-message img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: block; border: 1px solid #38bdf8; }
-        .input-container { padding: 15px; background-color: #0f192e; border-top: 1px solid #1e2d4a; display: flex; gap: 10px; align-items: center; }
+        
+        .preview-container { padding: 5px 15px; background: #0f192e; display: none; }
+        .preview-container img { height: 60px; border-radius: 6px; border: 1px solid #38bdf8; }
+
+        .input-container { padding: 12px; background-color: #0f192e; border-top: 1px solid #1e2d4a; display: flex; gap: 8px; align-items: center; }
         .input-box { flex: 1; background-color: #1e293b; border: 1px solid #334155; color: white; padding: 12px; border-radius: 8px; outline: none; font-size: 15px; }
-        .send-btn { background-color: #0284c7; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .icon-btn { background-color: #1e293b; border: 1px solid #334155; color: #38bdf8; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .send-btn { background-color: #0284c7; color: white; border: none; padding: 12px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -26,21 +31,87 @@
         <h1>ZION PRIME Z</h1>
         <button class="clear-btn" onclick="clearChat()">Clear Chat</button>
     </div>
+
     <div class="chat-container" id="chat"></div>
+
+    <div class="preview-container" id="previewContainer">
+        <img id="imagePreview" src="" alt="Upload Preview">
+    </div>
+
     <div class="input-container">
+        <!-- Image Upload Button -->
+        <label for="imageInput" class="icon-btn">📎</label>
+        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+        
         <input type="text" id="prompt" class="input-box" placeholder="Type prompt..." onkeydown="if(event.key==='Enter') sendMessage()">
+        
+        <!-- Speech to Text Mic Button -->
+        <button class="icon-btn" onclick="startSpeechRecognition()">🎤</button>
+        
+        <!-- Send Button -->
         <button class="send-btn" onclick="sendMessage()">➤</button>
     </div>
 
     <script>
+        let selectedBase64Image = null;
+
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedBase64Image = e.target.result;
+                    document.getElementById('imagePreview').src = selectedBase64Image;
+                    document.getElementById('previewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop prior speech
+                const cleanText = text.replace(/!\[.*?\]\(.*?\)/g, '').replace(/[*_#`]/g, ''); // strip markdown
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function startSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Speech recognition is not supported in this browser.");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.onresult = function(event) {
+                document.getElementById('prompt').value = event.results[0][0].transcript;
+            };
+            recognition.start();
+        }
+
         async function sendMessage() {
             const input = document.getElementById('prompt');
             const chat = document.getElementById('chat');
             const text = input.value.trim();
-            if (!text) return;
+            if (!text && !selectedBase64Image) return;
 
-            chat.innerHTML += `<div class="message user-message">${text}</div>`;
+            let userHTML = text;
+            if (selectedBase64Image) {
+                userHTML += `<br><img src="${selectedBase64Image}" style="max-height:150px; margin-top:5px; border-radius:6px;">`;
+            }
+
+            chat.innerHTML += `<div class="message user-message">${userHTML}</div>`;
+            
+            const payload = { prompt: text, image: selectedBase64Image };
+
+            // Reset input and preview
             input.value = '';
+            selectedBase64Image = null;
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('imageInput').value = '';
             chat.scrollTop = chat.scrollHeight;
 
             const loadingId = 'loading-' + Date.now();
@@ -51,10 +122,15 @@
                 const res = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: text })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
-                document.getElementById(loadingId).innerHTML = `<b>Zion Prime Z:</b><br>${marked.parse(data.result)}`;
+                const renderedHtml = marked.parse(data.result);
+                document.getElementById(loadingId).innerHTML = `<b>Zion Prime Z:</b><br>${renderedHtml}`;
+                
+                // Read response out loud
+                speakText(data.result);
+
             } catch (err) {
                 document.getElementById(loadingId).innerText = "Error getting response.";
             }
@@ -64,6 +140,7 @@
         async function clearChat() {
             await fetch('/clear', { method: 'POST' });
             document.getElementById('chat').innerHTML = '';
+            window.speechSynthesis.cancel();
         }
     </script>
 </body>
