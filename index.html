@@ -16,8 +16,10 @@
         body { background: var(--bg-color); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; overflow: hidden; }
         
         /* Header */
-        header { background: var(--panel-bg); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); z-index: 10; }
+        header { background: var(--panel-bg); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); z-index: 10; }
         .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo-title { display: flex; align-items: center; gap: 10px; }
+        .app-logo { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--accent-color); }
         .icon-btn { background: none; border: none; color: var(--text-main); font-size: 1.3rem; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
         header h1 { margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: var(--accent-color); font-weight: bold; }
 
@@ -45,7 +47,6 @@
         /* Input Footer & Plus Menu */
         #input-container { background: var(--panel-bg); padding: 12px 16px; display: flex; gap: 8px; border-top: 1px solid var(--border-color); align-items: center; position: relative; }
         
-        /* Plus Menu Popup */
         #plus-menu { position: absolute; bottom: 70px; left: 16px; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px; display: none; flex-direction: column; gap: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 50; width: 160px; }
         #plus-menu.active { display: flex; }
         .plus-option { padding: 10px 12px; font-size: 0.9rem; color: var(--text-main); background: none; border: none; text-align: left; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
@@ -69,9 +70,7 @@
             <h3>Chat History</h3>
             <button class="icon-btn" onclick="toggleSidebar()">✕</button>
         </div>
-        <div class="sidebar-content" id="history-list">
-            <!-- History injected dynamically -->
-        </div>
+        <div class="sidebar-content" id="history-list"></div>
         <div class="sidebar-footer">
             <button class="delete-history-btn" onclick="clearHistory()">Clear History</button>
         </div>
@@ -82,7 +81,10 @@
     <header>
         <div class="header-left">
             <button class="icon-btn" onclick="toggleSidebar()">☰</button>
-            <h1>ZION PRIME Z</h1>
+            <div class="logo-title">
+                <img src="logo.png" alt="Logo" class="app-logo">
+                <h1>ZION PRIME Z</h1>
+            </div>
         </div>
         <div style="font-size: 0.8rem; color: var(--text-muted);">ONLINE</div>
     </header>
@@ -111,7 +113,6 @@
     </div>
 
     <script>
-        // Sidebar History Logic
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('active');
@@ -119,9 +120,7 @@
         }
 
         function getHistory() {
-            try {
-                return JSON.parse(localStorage.getItem('zion_history') || '[]');
-            } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem('zion_history') || '[]'); } catch(e) { return []; }
         }
 
         function saveHistoryItem(text) {
@@ -152,7 +151,6 @@
             toggleSidebar();
         }
 
-        // Plus Menu Logic
         function togglePlusMenu(e) {
             e.stopPropagation();
             document.getElementById('plus-menu').classList.toggle('active');
@@ -169,7 +167,6 @@
             input.focus();
         }
 
-        // Speech Recognition (Mic Option)
         let recognition = null;
         let isRecording = false;
         function toggleSpeechRecognition() {
@@ -191,30 +188,13 @@
             recognition.lang = 'en-US';
             recognition.interimResults = false;
 
-            recognition.onstart = () => {
-                isRecording = true;
-                micBtn.classList.add('recording');
-            };
-
-            recognition.onresult = (event) => {
-                const speechToText = event.results[0][0].transcript;
-                input.value = speechToText;
-            };
-
-            recognition.onerror = () => {
-                isRecording = false;
-                micBtn.classList.remove('recording');
-            };
-
-            recognition.onend = () => {
-                isRecording = false;
-                micBtn.classList.remove('recording');
-            };
-
+            recognition.onstart = () => { isRecording = true; micBtn.classList.add('recording'); };
+            recognition.onresult = (event) => { input.value = event.results[0][0].transcript; };
+            recognition.onerror = () => { isRecording = false; micBtn.classList.remove('recording'); };
+            recognition.onend = () => { isRecording = false; micBtn.classList.remove('recording'); };
             recognition.start();
         }
 
-        // Chat Send Logic
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const container = document.getElementById('chat-container');
