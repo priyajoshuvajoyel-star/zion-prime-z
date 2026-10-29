@@ -10,6 +10,7 @@
         .message { padding: 10px 15px; border-radius: 10px; max-width: 80%; word-break: break-word; }
         .user { background: #ff4757; align-self: flex-end; }
         .bot { background: #2f3542; align-self: flex-start; }
+        .message img { max-width: 100%; border-radius: 8px; margin-top: 8px; display: block; }
         #input-container { display: flex; gap: 10px; }
         input { flex: 1; padding: 12px; border-radius: 5px; border: none; background: #2f3542; color: #fff; font-size: 16px; }
         button { padding: 12px 20px; background: #ff4757; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
@@ -31,7 +32,6 @@
             const text = input.value.trim();
             if (!text) return;
 
-            // Append user message
             const userDiv = document.createElement('div');
             userDiv.className = 'message user';
             userDiv.textContent = text;
@@ -39,7 +39,6 @@
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Append loading bot message
             const botDiv = document.createElement('div');
             botDiv.className = 'message bot';
             botDiv.textContent = 'Thinking...';
@@ -54,7 +53,13 @@
                 });
 
                 const data = await response.json();
-                botDiv.textContent = data.response || "Zion Prime Z active.";
+                botDiv.textContent = data.response || "";
+
+                if (data.image_url) {
+                    const img = document.createElement('img');
+                    img.src = data.image_url;
+                    botDiv.appendChild(img);
+                }
             } catch (err) {
                 botDiv.textContent = "Error connecting to server.";
             }
