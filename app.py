@@ -32,8 +32,8 @@ def chat():
 
         msg_lower = user_message.lower()
         
-        # Robust image trigger check
-        if any(keyword in msg_lower for keyword in ["image", "photo", "draw", "picture", "paint"]):
+        # Image generation check
+        if any(keyword in msg_lower for keyword in ["image", "photo", "draw", "picture", "paint"]) and "code" not in msg_lower:
             prompt_clean = msg_lower
             for kw in ["generate", "an", "a", "of", "image", "photo", "draw", "picture", "paint", "please"]:
                 prompt_clean = prompt_clean.replace(kw, "")
@@ -48,8 +48,15 @@ def chat():
                 "image_url": image_url
             })
 
-        # Text responses
-        if "who are you" in msg_lower or "what is your name" in msg_lower:
+        # Code generation responses for the expo
+        if "code" in msg_lower or "python" in msg_lower or "html" in msg_lower or "script" in msg_lower:
+            if "python" in msg_lower:
+                reply = "Here is your requested Python code snippet:\n\n```python\n# Zion Prime Z Automation Script\nimport time\n\ndef run_system():\n    print('Zion Prime Z core active...')\n    time.sleep(1)\n    print('All neural pathways verified.')\n\nif __name__ == '__main__':\n    run_system()\n```"
+            elif "html" in msg_lower:
+                reply = "Here is your requested HTML code snippet:\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Zion Prime Z</title>\n</head>\n<body>\n    <h1>Spatial Intelligence Active</h1>\n</body>\n</html>\n```"
+            else:
+                reply = "Here is the code you requested:\n\n```javascript\n// Zion Prime Z Handler\nfunction executeTask() {\n    console.log('Executing Zion Prime Z protocol...');\n}\nexecuteTask();\n```"
+        elif "who are you" in msg_lower or "what is your name" in msg_lower:
             reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
         elif "who is the us president" in msg_lower:
             reply = "Donald Trump"
