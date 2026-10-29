@@ -11,51 +11,217 @@
             --accent-color: #ff4757;
             --text-main: #ffffff;
             --text-muted: #94a3b8;
+            --border-color: #1e293b;
         }
-        body { background: var(--bg-color); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        body { background: var(--bg-color); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; overflow: hidden; }
         
-        /* Header / UI Banner */
-        header { background: var(--panel-bg); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e293b; }
-        header h1 { margin: 0; font-size: 1.2rem; letter-spacing: 1px; color: var(--accent-color); font-weight: bold; }
-        .status-badge { background: rgba(255, 71, 87, 0.1); color: var(--accent-color); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255, 71, 87, 0.3); }
+        /* Header */
+        header { background: var(--panel-bg); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); z-index: 10; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .icon-btn { background: none; border: none; color: var(--text-main); font-size: 1.3rem; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; }
+        header h1 { margin: 0; font-size: 1.1rem; letter-spacing: 1px; color: var(--accent-color); font-weight: bold; }
+
+        /* History Sidebar Drawer */
+        #sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--panel-bg); border-right: 1px solid var(--border-color); transition: left 0.3s ease; z-index: 100; display: flex; flex-direction: column; box-sizing: border-box; }
+        #sidebar.open { left: 0; }
+        .sidebar-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header h3 { margin: 0; font-size: 1rem; color: var(--text-main); }
+        .sidebar-content { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .history-item { padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 0.85rem; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-muted); }
+        .history-item:hover { background: rgba(255,255,255,0.06); color: var(--text-main); }
+        .sidebar-footer { padding: 12px; border-top: 1px solid var(--border-color); }
+        .delete-history-btn { width: 100%; padding: 8px; background: rgba(255, 71, 87, 0.15); color: var(--accent-color); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 90; }
+        .overlay.active { display: block; }
 
         /* Chat Workspace */
-        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
         .message { padding: 12px 16px; border-radius: 12px; max-width: 85%; word-break: break-word; white-space: pre-wrap; line-height: 1.5; font-size: 0.95rem; }
         .user { background: var(--accent-color); align-self: flex-end; color: #fff; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3); }
-        .bot { background: var(--panel-bg); align-self: flex-start; border: 1px solid #1e293b; color: var(--text-main); }
-        
+        .bot { background: var(--panel-bg); align-self: flex-start; border: 1px solid var(--border-color); color: var(--text-main); }
         .message img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: block; border: 1px solid #334155; }
+        .message pre, .message code { background: #1e1e1e; padding: 8px; border-radius: 5px; font-family: monospace; display: block; overflow-x: auto; margin-top: 5px; }
 
-        /* Input Footer */
-        #input-container { background: var(--panel-bg); padding: 15px 20px; display: flex; gap: 10px; border-top: 1px solid #1e293b; align-items: center; }
-        input { flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid #334155; background: #0b0f19; color: var(--text-main); font-size: 1rem; outline: none; }
-        input:focus { border-color: var(--accent-color); }
-        button { padding: 12px 20px; background: var(--accent-color); color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-        button:active { opacity: 0.8; }
+        /* Input Footer & Plus Menu */
+        #input-container { background: var(--panel-bg); padding: 12px 16px; display: flex; gap: 8px; border-top: 1px solid var(--border-color); align-items: center; position: relative; }
+        
+        /* Plus Menu Popup */
+        #plus-menu { position: absolute; bottom: 70px; left: 16px; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px; display: none; flex-direction: column; gap: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 50; width: 160px; }
+        #plus-menu.active { display: flex; }
+        .plus-option { padding: 10px 12px; font-size: 0.9rem; color: var(--text-main); background: none; border: none; text-align: left; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .plus-option:hover { background: rgba(255,255,255,0.05); color: var(--accent-color); }
+
+        input[type="text"] { flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid #334155; background: var(--bg-color); color: var(--text-main); font-size: 0.95rem; outline: none; }
+        input[type="text"]:focus { border-color: var(--accent-color); }
+        
+        .action-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; padding: 8px; display: flex; align-items: center; justify-content: center; }
+        .action-btn:hover { color: var(--text-main); }
+        .action-btn.recording { color: var(--accent-color); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        
+        #send-btn { background: var(--accent-color); color: #fff; border: none; border-radius: 8px; width: 40px; height: 40px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
+    <!-- Sidebar / History Drawer -->
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h3>Chat History</h3>
+            <button class="icon-btn" onclick="toggleSidebar()">✕</button>
+        </div>
+        <div class="sidebar-content" id="history-list">
+            <!-- History injected dynamically -->
+        </div>
+        <div class="sidebar-footer">
+            <button class="delete-history-btn" onclick="clearHistory()">Clear History</button>
+        </div>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Header -->
     <header>
-        <h1>ZION PRIME Z</h1>
-        <div class="status-badge">SYSTEM ACTIVE</div>
+        <div class="header-left">
+            <button class="icon-btn" onclick="toggleSidebar()">☰</button>
+            <h1>ZION PRIME Z</h1>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">ONLINE</div>
     </header>
 
+    <!-- Chat Workspace -->
     <div id="chat-container">
         <div class="message bot">Zion Prime Z spatial intelligence online. How can I assist your project today?</div>
     </div>
 
+    <!-- Plus Menu Popup -->
+    <div id="plus-menu">
+        <button class="plus-option" onclick="selectPlusOption('Queue')">📊 Queue</button>
+        <button class="plus-option" onclick="selectPlusOption('Photos')">🖼️ Photos</button>
+        <button class="plus-option" onclick="selectPlusOption('V Camera')">📷 V Camera</button>
+        <button class="plus-option" onclick="selectPlusOption('Avatar')">👤 Avatar</button>
+        <button class="plus-option" onclick="selectPlusOption('File')">📁 File</button>
+        <button class="plus-option" onclick="selectPlusOption('Document')">📄 Document</button>
+    </div>
+
+    <!-- Input Footer -->
     <div id="input-container">
-        <input type="text" id="user-input" placeholder="Type a message, prompt code, or generate image..." autofocus>
-        <button onclick="sendMessage()">Send</button>
+        <button class="action-btn" id="plus-btn" onclick="togglePlusMenu(event)">+</button>
+        <input type="text" id="user-input" placeholder="Type or speak a message..." autofocus>
+        <button class="action-btn" id="mic-btn" onclick="toggleSpeechRecognition()" title="Voice Command">🎤</button>
+        <button id="send-btn" onclick="sendMessage()">➤</button>
     </div>
 
     <script>
+        // Sidebar History Logic
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+            renderHistory();
+        }
+
+        function getHistory() {
+            try {
+                return JSON.parse(localStorage.getItem('zion_history') || '[]');
+            } catch(e) { return []; }
+        }
+
+        function saveHistoryItem(text) {
+            if(!text) return;
+            let history = getHistory();
+            history.unshift(text);
+            if(history.length > 30) history = history.slice(0, 30);
+            localStorage.setItem('zion_history', JSON.stringify(history));
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('zion_history');
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            const history = getHistory();
+            if(history.length === 0) {
+                list.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; padding:10px;">No saved history</div>';
+                return;
+            }
+            list.innerHTML = history.map(item => `<div class="history-item" onclick="loadHistoryItem('${item.replace(/'/g, "\\'")}')">${item}</div>`).join('');
+        }
+
+        function loadHistoryItem(text) {
+            document.getElementById('user-input').value = text;
+            toggleSidebar();
+        }
+
+        // Plus Menu Logic
+        function togglePlusMenu(e) {
+            e.stopPropagation();
+            document.getElementById('plus-menu').classList.toggle('active');
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('plus-menu').classList.remove('active');
+        });
+
+        function selectPlusOption(option) {
+            document.getElementById('plus-menu').classList.remove('active');
+            const input = document.getElementById('user-input');
+            input.value = `[Selected: ${option}] `;
+            input.focus();
+        }
+
+        // Speech Recognition (Mic Option)
+        let recognition = null;
+        let isRecording = false;
+        function toggleSpeechRecognition() {
+            const micBtn = document.getElementById('mic-btn');
+            const input = document.getElementById('user-input');
+
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition is not supported in this browser.');
+                return;
+            }
+
+            if (isRecording) {
+                if (recognition) recognition.stop();
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                micBtn.classList.add('recording');
+            };
+
+            recognition.onresult = (event) => {
+                const speechToText = event.results[0][0].transcript;
+                input.value = speechToText;
+            };
+
+            recognition.onerror = () => {
+                isRecording = false;
+                micBtn.classList.remove('recording');
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                micBtn.classList.remove('recording');
+            };
+
+            recognition.start();
+        }
+
+        // Chat Send Logic
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const container = document.getElementById('chat-container');
             const text = input.value.trim();
             if (!text) return;
+
+            saveHistoryItem(text);
 
             const userDiv = document.createElement('div');
             userDiv.className = 'message user';
