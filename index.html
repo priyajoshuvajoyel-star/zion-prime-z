@@ -162,6 +162,19 @@
             input.focus();
         }
 
+        // Text-to-Speech Voice Output Function
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop any ongoing speech
+                // Strip code blocks for cleaner speech
+                const cleanText = text.replace(/```[\s\S]*?```/g, " Here is the code snippet requested. ");
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         let recognition = null;
         let isRecording = false;
         function toggleSpeechRecognition() {
@@ -184,7 +197,10 @@
             recognition.interimResults = false;
 
             recognition.onstart = () => { isRecording = true; micBtn.classList.add('recording'); };
-            recognition.onresult = (event) => { input.value = event.results[0][0].transcript; };
+            recognition.onresult = (event) => { 
+                input.value = event.results[0][0].transcript;
+                sendMessage(); // Automatically send after voice recognition!
+            };
             recognition.onerror = () => { isRecording = false; micBtn.classList.remove('recording'); };
             recognition.onend = () => { isRecording = false; micBtn.classList.remove('recording'); };
             recognition.start();
@@ -220,6 +236,9 @@
 
                 const data = await response.json();
                 botDiv.textContent = data.response || "";
+                
+                // Speak out the response automatically!
+                speakText(data.response || "");
 
                 if (data.image_url) {
                     const img = document.createElement('img');
