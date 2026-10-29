@@ -48,14 +48,52 @@ def chat():
                 "image_url": image_url
             })
 
-        # Code generation responses for the expo
-        if "code" in msg_lower or "python" in msg_lower or "html" in msg_lower or "script" in msg_lower:
-            if "python" in msg_lower:
-                reply = "Here is your requested Python code snippet:\n\n```python\n# Zion Prime Z Automation Script\nimport time\n\ndef run_system():\n    print('Zion Prime Z core active...')\n    time.sleep(1)\n    print('All neural pathways verified.')\n\nif __name__ == '__main__':\n    run_system()\n```"
-            elif "html" in msg_lower:
-                reply = "Here is your requested HTML code snippet:\n\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Zion Prime Z</title>\n</head>\n<body>\n    <h1>Spatial Intelligence Active</h1>\n</body>\n</html>\n```"
-            else:
-                reply = "Here is the code you requested:\n\n```javascript\n// Zion Prime Z Handler\nfunction executeTask() {\n    console.log('Executing Zion Prime Z protocol...');\n}\nexecuteTask();\n```"
+        # Dynamic Code Generation
+        if "flappy bird" in msg_lower:
+            reply = (
+                "Here is the complete Python code for Flappy Bird using Pygame:\n\n"
+                "```python\n"
+                "import pygame\n"
+                "import random\n\n"
+                "pygame.init()\n"
+                "SCREEN_WIDTH, SCREEN_HEIGHT = 400, 600\n"
+                "screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))\n"
+                "clock = pygame.time.Clock()\n\n"
+                "bird_y, bird_x, gravity, bird_movement = 300, 50, 0.25, 0\n"
+                "pipe_list, SPAWNPIPE = [], pygame.USEREVENT\n"
+                "pygame.time.set_timer(SPAWNPIPE, 1200)\n\n"
+                "while True:\n"
+                "    for event in pygame.event.get():\n"
+                "        if event.type == pygame.QUIT:\n"
+                "            pygame.quit()\n"
+                "            exit()\n"
+                "        if event.type == pygame.KEYDOWN:\n"
+                "            if event.key == pygame.K_SPACE:\n"
+                "                bird_movement = -7\n"
+                "        if event.type == SPAWNPIPE:\n"
+                "            pipe_height = random.randint(200, 400)\n"
+                "            pipe_list.append(pygame.Rect(400, pipe_height, 60, 500))\n\n"
+                "    screen.fill((135, 206, 235))\n"
+                "    bird_movement += gravity\n"
+                "    bird_y += bird_movement\n"
+                "    pygame.draw.circle(screen, (255, 255, 0), (bird_x, int(bird_y)), 15)\n\n"
+                "    for pipe in pipe_list:\n"
+                "        pipe.centerx -= 3\n"
+                "        pygame.draw.rect(screen, (0, 200, 0), pipe)\n\n"
+                "    pygame.display.update()\n"
+                "    clock.tick(120)\n"
+                "```"
+            )
+        elif "python" in msg_lower:
+            reply = (
+                "Here is your Python code snippet:\n\n"
+                "```python\n"
+                "def zion_core():\n"
+                "    print('Zion Prime Z active...')\n\n"
+                "if __name__ == '__main__':\n"
+                "    zion_core()\n"
+                "```"
+            )
         elif "who are you" in msg_lower or "what is your name" in msg_lower:
             reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
         elif "who is the us president" in msg_lower:
