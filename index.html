@@ -40,7 +40,13 @@
         .user { background: var(--accent-color); align-self: flex-end; color: #fff; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3); }
         .bot { background: var(--panel-bg); align-self: flex-start; border: 1px solid var(--border-color); color: var(--text-main); }
         .message img { max-width: 100%; border-radius: 8px; margin-top: 10px; display: block; border: 1px solid #334155; }
-        .message pre, .message code { background: #1e1e1e; padding: 8px; border-radius: 5px; font-family: monospace; display: block; overflow-x: auto; margin-top: 5px; }
+        
+        /* Colorful Code Block Styling */
+        .message pre { background: #090d16; padding: 12px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; display: block; overflow-x: auto; margin-top: 8px; border: 1px solid #1e293b; color: #e2e8f0; font-size: 0.9rem; }
+        .code-keyword { color: #ff79c6; font-weight: bold; }
+        .code-string { color: #f1fa8c; }
+        .code-def { color: #50fa7b; font-weight: bold; }
+        .code-comment { color: #6272a4; font-style: italic; }
 
         /* Input Footer & Plus Menu */
         #input-container { background: var(--panel-bg); padding: 12px 16px; display: flex; gap: 8px; border-top: 1px solid var(--border-color); align-items: center; position: relative; }
@@ -162,11 +168,9 @@
             input.focus();
         }
 
-        // Text-to-Speech Voice Output Function
         function speakText(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop any ongoing speech
-                // Strip code blocks for cleaner speech
+                window.speechSynthesis.cancel();
                 const cleanText = text.replace(/```[\s\S]*?```/g, " Here is the code snippet requested. ");
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.rate = 1.0;
@@ -199,11 +203,23 @@
             recognition.onstart = () => { isRecording = true; micBtn.classList.add('recording'); };
             recognition.onresult = (event) => { 
                 input.value = event.results[0][0].transcript;
-                sendMessage(); // Automatically send after voice recognition!
+                sendMessage();
             };
             recognition.onerror = () => { isRecording = false; micBtn.classList.remove('recording'); };
             recognition.onend = () => { isRecording = false; micBtn.classList.remove('recording'); };
             recognition.start();
+        }
+
+        // Simple syntax highlighter for code snippets
+        function formatCodeBlocks(text) {
+            return text.replace(/```python([\s\S]*?)```/g, (match, code) => {
+                let highlighted = code
+                    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    .replace(/\b(import|def|return|if|else|while|for|in|class|from|not|and|or)\b/g, '<span class="code-keyword">$1</span>')
+                    .replace(/(['"])(?:(?!\1)[^\\]|\\.)*?\1/g, '<span class="code-string">$&</span>')
+                    .replace(/\b(print|init|set_mode|tick|update|quit)\b/g, '<span class="code-def">$1</span>');
+                return `<pre><code>${highlighted}</code></pre>`;
+            }).replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
         }
 
         async function sendMessage() {
@@ -235,10 +251,12 @@
                 });
 
                 const data = await response.json();
-                botDiv.textContent = data.response || "";
+                const rawResponse = data.response || "";
                 
-                // Speak out the response automatically!
-                speakText(data.response || "");
+                // Render with colorful code formatting
+                botDiv.innerHTML = formatCodeBlocks(rawResponse);
+                
+                speakText(rawResponse);
 
                 if (data.image_url) {
                     const img = document.createElement('img');
