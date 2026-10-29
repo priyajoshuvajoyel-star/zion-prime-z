@@ -1,10 +1,12 @@
 import os
 import requests
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enables Cross-Origin requests for your PWA frontend
 
-# Load API keys from Render Environment Variables
+# Fetch keys from Render Environment Variables
 OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
 OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY")
 COMET_KEY = os.environ.get("COMET_API_KEY")
@@ -43,17 +45,21 @@ def call_llm_with_fallback(user_prompt):
                 data = res.json()
                 return data['choices'][0]['message']['content']
             else:
-                print(f"[{provider['name']}] Failed with status code {res.status_code}. Trying next...")
+                print(f"[{provider['name']}] Failed with status {res.status_code}. Trying next...")
         except Exception as e:
             print(f"[{provider['name']}] Error: {str(e)}. Trying next...")
 
     return "Local Fallback: Zion Prime Z core neural pathways active. External AI providers are temporarily undergoing rate limits."
 
-@app.route('/chat', methods=['POST'])
+@app.route('/chat', methods=['POST', 'OPTIONS'])
 def chat():
-    user_data = request.json
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
+
+    user_data = request.get_json(silent=True) or {}
     user_message = user_data.get("message", "")
 
+    # Core identity & political anchors
     if "who are you" in user_message.lower():
         return jsonify({"response": "I am Zion Prime Z, created by Master S. Joshua."})
     elif "who is the us president" in user_message.lower():
