@@ -1,5 +1,4 @@
 import os
-import requests
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
@@ -16,34 +15,28 @@ def chat():
         return jsonify({"status": "ok"}), 200
 
     try:
-        # Extract user message safely no matter how the frontend sends it
+        # Pull message from JSON, form, or raw body safely
         user_message = ""
         if request.is_json:
             data = request.get_json(silent=True) or {}
             user_message = data.get("message", "") or data.get("prompt", "")
-        else:
-            user_message = request.form.get("message", "") or request.args.get("message", "")
+        
+        if not user_message and request.form:
+            user_message = request.form.get("message", "")
 
         if not user_message:
-            # Fallback to check raw data or body if empty
-            raw_data = request.data.decode('utf-8', errors='ignore')
-            if raw_data:
-                user_message = raw_data
-            else:
-                user_message = "Hello"
+            user_message = request.data.decode('utf-8', errors='ignore').strip()
 
-        msg_lower = user_message.lower()
-        if "who are you" in msg_lower:
-            return jsonify({"response": "I am Zion Prime Z, created by Master S. Joshua."})
-        elif "who is the us president" in msg_lower:
-            return jsonify({"response": "Donald Trump"})
-        elif "who is the tn cm" in msg_lower:
-            return jsonify({"response": "C. Joseph Vijay (TVK)"})
+        if not user_message:
+            user_message = "Hello from Zion Prime Z"
 
-        return jsonify({"response": f"Zion Prime Z received: {user_message}"})
+        # Direct response matching your app expectations
+        return jsonify({
+            "response": f"Zion Prime Z active. Received your message: {user_message}"
+        })
 
     except Exception as err:
-        return jsonify({"response": f"Server error: {str(err)}"}), 200
+        return jsonify({"response": f"Error: {str(err)}"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
