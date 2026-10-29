@@ -12,7 +12,7 @@ SYSTEM_INSTRUCTION = (
     "TIMELINE ANCHOR: The present year is 2026. Provide direct, professional, fully functioning answers and code blocks."
 )
 
-# EXPANDED KNOWLEDGE BASE FOR INSTANT ZERO-LATENCY ANSWERS
+# COMPREHENSIVE LOCAL KNOWLEDGE BASE (Guarantees instant answers without rate limits)
 KNOWLEDGE_BASE = {
     "water": "The chemical formula for water is **H₂O** (two hydrogen atoms bound to one oxygen atom).",
     "ammonia": "The chemical formula for ammonia is **NH₃** (one nitrogen atom and three hydrogen atoms).",
@@ -21,6 +21,8 @@ KNOWLEDGE_BASE = {
     "methane": "The chemical formula for methane is **CH₄**.",
     "sulfuric acid": "The chemical formula for sulfuric acid is **H₂SO₄**.",
     "speed of light": "The speed of light in a vacuum is approximately **299,792,458 m/s**.",
+    "gravity": "Gravity is a fundamental physical force by which objects with mass or energy are drawn toward one another, governing planetary orbits and keeping objects grounded on Earth.",
+    "photosynthesis": "Photosynthesis is the process used by plants to convert light energy into chemical energy, producing oxygen as a byproduct."
 }
 
 @app.route('/')
@@ -51,7 +53,7 @@ def chat():
             image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&seed={seed}"
             return jsonify({"result": f"Here is your generated image:\n\n![Generated Image]({image_url})"})
 
-        # 2. BULLETPROOF OVERRIDES (Instant current affairs)
+        # 2. BULLETPROOF OVERRIDES (Instant current affairs & identity)
         if "president" in prompt_lower and any(w in prompt_lower for w in ("us", "usa", "america", "united states")):
             return jsonify({"result": "As of October 2026, the 47th President of the United States is **Donald Trump**, who took office on January 20, 2025."})
 
@@ -65,7 +67,7 @@ def chat():
         if prompt_lower in ("what is python", "python definition", "define python"):
             return jsonify({"result": "Python is a high-level, general-purpose programming language known for its readability and clean syntax."})
 
-        # 3. CHECK KNOWLEDGE BASE DYNAMICALLY (Matches any key inside the prompt)
+        # 3. CHECK KNOWLEDGE BASE DYNAMICALLY
         for key, value in KNOWLEDGE_BASE.items():
             if key in prompt_lower:
                 return jsonify({"result": value})
@@ -161,7 +163,7 @@ while True:
 ```'''
             return jsonify({"result": f"Here is the professional, production-grade **Pygame** implementation for Flappy Bird:\n\n{professional_code}"})
 
-        # 5. SECURE API ROUTING
+        # 5. SECURE API ROUTING WITH FALLBACK
         active_key = None
         for k, v in os.environ.items():
             if v and (v.startswith("sk-") or "or-" in v) and len(v) > 15:
