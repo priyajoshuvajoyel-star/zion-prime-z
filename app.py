@@ -12,6 +12,17 @@ SYSTEM_INSTRUCTION = (
     "TIMELINE ANCHOR: The present year is 2026. Provide direct, professional, fully functioning answers and code blocks."
 )
 
+# EXPANDED KNOWLEDGE BASE FOR INSTANT ZERO-LATENCY ANSWERS
+KNOWLEDGE_BASE = {
+    "water": "The chemical formula for water is **H₂O** (two hydrogen atoms bound to one oxygen atom).",
+    "ammonia": "The chemical formula for ammonia is **NH₃** (one nitrogen atom and three hydrogen atoms).",
+    "carbon dioxide": "The chemical formula for carbon dioxide is **CO₂**.",
+    "salt": "The chemical formula for table salt (sodium chloride) is **NaCl**.",
+    "methane": "The chemical formula for methane is **CH₄**.",
+    "sulfuric acid": "The chemical formula for sulfuric acid is **H₂SO₄**.",
+    "speed of light": "The speed of light in a vacuum is approximately **299,792,458 m/s**.",
+}
+
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
@@ -54,10 +65,12 @@ def chat():
         if prompt_lower in ("what is python", "python definition", "define python"):
             return jsonify({"result": "Python is a high-level, general-purpose programming language known for its readability and clean syntax."})
 
-        if "water" in prompt_lower and ("formula" in prompt_lower or "what is" in prompt_lower):
-            return jsonify({"result": "The chemical formula for water is **H₂O** (two hydrogen atoms bound to one oxygen atom)."})
+        # 3. CHECK KNOWLEDGE BASE DYNAMICALLY (Matches any key inside the prompt)
+        for key, value in KNOWLEDGE_BASE.items():
+            if key in prompt_lower:
+                return jsonify({"result": value})
 
-        # 3. PROFESSIONAL PYGAME FLAPPY BIRD IMPLEMENTATION
+        # 4. PROFESSIONAL PYGAME FLAPPY BIRD IMPLEMENTATION
         if "flappy" in prompt_lower or ("game" in prompt_lower and "python" in prompt_lower):
             professional_code = '''```python
 # Zion Prime Z - Professional Pygame Flappy Bird Engine
@@ -67,14 +80,12 @@ import sys
 
 pygame.init()
 
-# Screen Dimensions
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Zion Prime Z - Flappy Bird")
 clock = pygame.time.Clock()
 
-# Game Variables
 GRAVITY = 0.25
 bird_movement = 0
 bird_y = 300
@@ -115,16 +126,13 @@ while True:
             bottom_pipe = pygame.Rect(SCREEN_WIDTH, random_height + 50, pipe_width, SCREEN_HEIGHT)
             pipe_list.append((top_pipe, bottom_pipe))
 
-    # Background
     screen.fill((135, 206, 250))
 
     if game_active:
-        # Bird Physics
         bird_movement += GRAVITY
         bird_y += bird_movement
         pygame.draw.circle(screen, (255, 255, 0), (bird_x, int(bird_y)), bird_radius)
 
-        # Pipe Logic
         new_pipes = []
         for top, bottom in pipe_list:
             top.x -= pipe_speed
@@ -132,7 +140,6 @@ while True:
             pygame.draw.rect(screen, (34, 139, 34), top)
             pygame.draw.rect(screen, (34, 139, 34), bottom)
             
-            # Collision Detection
             bird_rect = pygame.Rect(bird_x - bird_radius, bird_y - bird_radius, bird_radius * 2, bird_radius * 2)
             if bird_rect.colliderect(top) or bird_rect.colliderect(bottom) or bird_y <= 0 or bird_y >= 500:
                 game_active = False
@@ -145,7 +152,6 @@ while True:
 
     draw_floor()
     
-    # Render Score
     font = pygame.font.SysFont(None, 36)
     score_surface = font.render(f"Score: {int(score)}", True, (255, 255, 255))
     screen.blit(score_surface, (15, 15))
@@ -153,9 +159,9 @@ while True:
     pygame.display.update()
     clock.tick(60)
 ```'''
-            return jsonify({"result": f"Here is the professional, production-grade **Pygame** implementation for Flappy Bird with complete physics, collision detection, and window rendering:\n\n{professional_code}"})
+            return jsonify({"result": f"Here is the professional, production-grade **Pygame** implementation for Flappy Bird:\n\n{professional_code}"})
 
-        # 4. SECURE API ROUTING
+        # 5. SECURE API ROUTING
         active_key = None
         for k, v in os.environ.items():
             if v and (v.startswith("sk-") or "or-" in v) and len(v) > 15:
