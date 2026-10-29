@@ -33,7 +33,7 @@ def chat():
         msg_lower = user_message.lower()
         
         # Image Generation Check
-        if any(keyword in msg_lower for keyword in ["image", "photo", "draw", "picture", "paint"]) and "code" not in msg_lower:
+        if any(kw in msg_lower for kw in ["image", "photo", "draw", "picture", "paint"]) and "code" not in msg_lower:
             prompt_clean = msg_lower
             for kw in ["generate", "an", "a", "of", "image", "photo", "draw", "picture", "paint", "please"]:
                 prompt_clean = prompt_clean.replace(kw, "")
@@ -48,8 +48,10 @@ def chat():
                 "image_url": image_url
             })
 
-        # Smart Knowledge Base & Code Handling
-        if "water" in msg_lower and ("formula" in msg_lower or "chemical" in msg_lower):
+        # Flexible Knowledge & Code Routing
+        if "president" in msg_lower or "usa" in msg_lower or "united states" in msg_lower:
+            reply = "Donald Trump"
+        elif "water" in msg_lower and ("formula" in msg_lower or "chemical" in msg_lower):
             reply = "The chemical formula for water is H₂O (two hydrogen atoms bonded to one oxygen atom)."
         elif "flappy bird" in msg_lower:
             reply = (
@@ -98,9 +100,7 @@ def chat():
             )
         elif "who are you" in msg_lower or "what is your name" in msg_lower:
             reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
-        elif "who is the us president" in msg_lower:
-            reply = "Donald Trump"
-        elif "who is the tn cm" in msg_lower or "chief minister" in msg_lower:
+        elif "chief minister" in msg_lower or "tn cm" in msg_lower or "vijay" in msg_lower:
             reply = "C. Joseph Vijay (TVK)"
         elif "science expo" in msg_lower or "project" in msg_lower:
             reply = "Zion Prime Z integrates real-time PWA frontend interaction with custom Python backend processing for advanced science exhibition demonstrations."
