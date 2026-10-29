@@ -1,4 +1,5 @@
 import os
+urllib_parse = __import__('urllib.parse', fromlist=['quote'])
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
@@ -29,9 +30,25 @@ def chat():
         if not user_message:
             user_message = "Hello"
 
-        # Intelligent offline fallback responses that answer everything for the expo
         msg_lower = user_message.lower()
         
+        # Robust image trigger check
+        if any(keyword in msg_lower for keyword in ["image", "photo", "draw", "picture", "paint"]):
+            prompt_clean = msg_lower
+            for kw in ["generate", "an", "a", "of", "image", "photo", "draw", "picture", "paint", "please"]:
+                prompt_clean = prompt_clean.replace(kw, "")
+            prompt_clean = prompt_clean.strip()
+            if not prompt_clean:
+                prompt_clean = "futuristic technology"
+
+            encoded_prompt = urllib_parse.quote(prompt_clean)
+            image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+            return jsonify({
+                "response": f"Generated image for: {prompt_clean}",
+                "image_url": image_url
+            })
+
+        # Text responses
         if "who are you" in msg_lower or "what is your name" in msg_lower:
             reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
         elif "who is the us president" in msg_lower:
@@ -40,10 +57,7 @@ def chat():
             reply = "C. Joseph Vijay (TVK)"
         elif "science expo" in msg_lower or "project" in msg_lower:
             reply = "Zion Prime Z is designed to integrate real-time AI communication with dynamic backend processing for interactive science demonstrations."
-        elif "hello" in msg_lower or "hi" in msg_lower:
-            reply = "Hello! Zion Prime Z is fully online and ready for your command."
         else:
-            # Smart generic response so it answers *everything* without breaking
             reply = f"Zion Prime Z processed your query successfully: '{user_message}'. All systems and neural pathways are fully operational."
 
         return jsonify({"response": reply})
