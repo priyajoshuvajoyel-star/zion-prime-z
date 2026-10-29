@@ -12,44 +12,43 @@ COMET_KEY = os.environ.get("COMET_API_KEY")
 
 def call_llm_with_fallback(user_prompt):
     providers = []
-
-    # 1. OpenRouter
     if OPENROUTER_KEY:
         providers.append({
             "name": "OpenRouter",
             "url": "https://openrouter.ai/api/v1/chat/completions",
-            "headers": {"Authorization": f"Bearer {OPENROUTER_KEY}"},
+            "headers": {"Authorization": f"Bearer {OPENROUTER_KEY}", "Content-Type": "application/json"},
             "payload": {"model": "openai/gpt-3.5-turbo", "messages": [{"role": "user", "content": user_prompt}]}
         })
-
-    # 2. OpenAI
     if OPENAI_KEY:
         providers.append({
             "name": "OpenAI",
             "url": "https://api.openai.com/v1/chat/completions",
-            "headers": {"Authorization": f"Bearer {OPENAI_KEY}"},
-            "payload": {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": user_prompt}]}
+            "headers": {"Authorization": f"Bearer {OPENAI_KEY}", "Content-Type": "application/json"},
+            "payload": {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": user_prompt}]}
         })
-
-    # 3. CometAPI
     if COMET_KEY:
         providers.append({
             "name": "CometAPI",
             "url": "https://api.cometapi.com/v1/chat/completions",
-            "headers": {"Authorization": f"Bearer {COMET_KEY}"},
+            "headers": {"Authorization": f"Bearer {COMET_KEY}", "Content-Type": "application/json"},
             "payload": {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": user_prompt}]}
         })
 
     for provider in providers:
         try:
-            res = requests.post(provider["url"], headers=provider["headers"], json=provider["payload"], timeout=8)
+            res = requests.post(provider["url"], headers=provider["headers"], json=provider["payload"], timeout=10)
             if res.status_code == 200:
                 data = res.json()
-                return data['choices'][0]['message']['content']
-        except Exception as e:
-            print(f"[{provider['name']}] Error: {str(e)}")
+                if 'choices' in data and len(data['choices']) > 0:
+                    return data['choices'][0]['message']['content']
+        except Exception:
+            pass
 
-    return "Local Fallback: All external API providers are currently rate-limited or updating. Core neural pathways active."
+    return "Local Fallback: Zion Prime Z core neural pathways active. External AI providers are temporarily undergoing rate limits."
+
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({"status": "Zion Prime Z Backend Online"}), 200
 
 @app.route('/chat', methods=['POST', 'GET', 'OPTIONS'])
 def chat():
@@ -63,7 +62,6 @@ def chat():
         if not user_message:
             return jsonify({"response": "System operational. Please enter a prompt."})
 
-        # Hardcoded anchors
         msg_lower = user_message.lower()
         if "who are you" in msg_lower:
             return jsonify({"response": "I am Zion Prime Z, created by Master S. Joshua."})
@@ -74,7 +72,6 @@ def chat():
 
         ai_reply = call_llm_with_fallback(user_message)
         return jsonify({"response": ai_reply})
-
     except Exception as err:
         return jsonify({"response": f"Server processing error: {str(err)}"}), 200
 
