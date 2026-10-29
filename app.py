@@ -1,9 +1,9 @@
 import os
 import requests
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
 OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
@@ -47,8 +47,8 @@ def call_llm_with_fallback(user_prompt):
     return "Local Fallback: Zion Prime Z core neural pathways active. External AI providers are temporarily undergoing rate limits."
 
 @app.route('/', methods=['GET'])
-def home():
-    return jsonify({"status": "Zion Prime Z Backend Online"}), 200
+def index():
+    return send_from_directory('.', 'index.html')
 
 @app.route('/chat', methods=['POST', 'GET', 'OPTIONS'])
 def chat():
