@@ -2,355 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zion Prime Z</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon.png">
-    <meta name="theme-color" content="#1e1e1e">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #121212; color: #ffffff; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
-
-        header { padding: 12px 16px; background-color: #1e1e1e; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2a2a2a; }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        header img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
-        header h1 { font-size: 1.1rem; font-weight: 600; color: #ff3333; }
-
-        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: #1a1a1a; z-index: 200; transition: left 0.3s ease; display: flex; flex-direction: column; border-right: 1px solid #2a2a2a; }
-        .sidebar.active { left: 0; }
-        .sidebar-header { padding: 16px; background-color: #242424; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-        .sidebar-content { flex: 1; overflow-y: auto; padding: 12px; }
-        .new-chat-btn { width: 100%; padding: 10px; background: #ff3333; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 12px; }
-        .history-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .history-item { padding: 10px; background: #262626; border-radius: 6px; font-size: 0.9rem; cursor: pointer; color: #ddd; border: 1px solid #333; }
-        .history-item:hover { background: #333; }
-
-        .chat-container { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: calc(100vh - 120px); }
-        
-        .msg-user { align-self: flex-end; background-color: #ff3333; color: #fff; padding: 10px 14px; border-radius: 16px; max-width: 85%; word-break: break-word; }
-        .msg-ai { align-self: flex-start; background-color: #2a2a2a; color: #e0e0e0; padding: 12px 14px; border-radius: 16px; max-width: 88%; word-break: break-word; line-height: 1.5; font-size: 0.95rem; }
-        
-        .msg-ai pre { background: #151515; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 10px 0; border: 1px solid #444; }
-        .msg-ai code { font-family: monospace; color: #ff6666; font-size: 0.85rem; }
-        .msg-ai pre code { color: #5af78e; }
-        .msg-ai img { width: 100%; border-radius: 10px; margin-top: 10px; display: block; object-fit: cover; }
-        .msg-ai strong { color: #ff4d4d; }
-        .msg-ai p { margin-bottom: 8px; }
-
-        .input-bar { padding: 12px 16px; background-color: #1e1e1e; border-top: 1px solid #2a2a2a; display: flex; align-items: center; gap: 10px; position: sticky; bottom: 0; width: 100%; }
-        
-        .icon-btn { background: none; border: none; color: #a0a0a0; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
-        .icon-btn.recording { color: #ff3333; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
-
-        input[type="text"] { flex: 1; background-color: #2a2a2a; border: none; color: #ffffff; padding: 10px 16px; border-radius: 20px; font-size: 0.95rem; outline: none; }
-
-        .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; z-index: 90; }
-        .bottom-sheet { position: fixed; bottom: -100%; left: 0; right: 0; background-color: #1e1e1e; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 20px; transition: bottom 0.3s ease-in-out; z-index: 100; border-top: 1px solid #333; }
-        .bottom-sheet.active { bottom: 0; }
-        .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .sheet-options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; }
-        .grid-item { background: none; border: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-        .icon-wrapper { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
-        .grid-item span { font-size: 0.8rem; color: #ccc; }
-
-        input[type="file"] { display: none; }
+        body { background: #121212; color: #fff; font-family: sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        #chat-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .message { padding: 10px 15px; border-radius: 10px; max-width: 80%; word-break: break-word; }
+        .user { background: #ff4757; align-self: flex-end; }
+        .bot { background: #2f3542; align-self: flex-start; }
+        #input-container { display: flex; gap: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 5px; border: none; background: #2f3542; color: #fff; font-size: 16px; }
+        button { padding: 12px 20px; background: #ff4757; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <span>Menu & History</span>
-            <button class="icon-btn" onclick="toggleSidebar()">&times;</button>
-        </div>
-        <div class="sidebar-content">
-            <button class="new-chat-btn" onclick="createNewChat()">+ New Chat</button>
-            <ul class="history-list" id="historyList"></ul>
-        </div>
+    <div id="chat-container">
+        <div class="message bot">Zion Prime Z online. How can I help you?</div>
     </div>
-
-    <header>
-        <div class="header-left">
-            <button class="icon-btn" onclick="toggleSidebar()" title="Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-            <img src="icon.png" alt="Logo">
-            <h1>Zion Prime Z</h1>
-        </div>
-        <button class="icon-btn" onclick="clearCurrentChat()" title="Clear Chat">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        </button>
-    </header>
-
-    <div class="chat-container" id="chatContainer"></div>
-
-    <div class="input-bar">
-        <button class="icon-btn" onclick="openAttachmentSheet()" title="Attach">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
-
-        <input type="text" id="userInput" placeholder="Type or speak a message..." onkeypress="if(event.key==='Enter') sendMessage()">
-
-        <button class="icon-btn" id="micBtn" onclick="toggleVoice()" title="Voice Input">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-        </button>
-
-        <button class="icon-btn" style="color: #ff3333;" onclick="sendMessage()" title="Send">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </button>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Type or speak a message..." autofocus>
+        <button onclick="sendMessage()">Send</button>
     </div>
-
-    <div class="overlay" id="overlay" onclick="closeAll()"></div>
-
-    <div id="attachmentSheet" class="bottom-sheet">
-        <div class="sheet-header">
-            <span>Share & Attach</span>
-            <button onclick="closeAttachmentSheet()" class="icon-btn">&times;</button>
-        </div>
-        <div class="sheet-options-grid">
-            <button class="grid-item" onclick="triggerCamera()"><div class="icon-wrapper" style="background: #e91e63;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div><span>Camera</span></button>
-            <button class="grid-item" onclick="triggerPhotoLibrary()"><div class="icon-wrapper" style="background: #9c27b0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div><span>Photos</span></button>
-            <button class="grid-item" onclick="triggerFilePicker('*/*')"><div class="icon-wrapper" style="background: #5c6bc0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div><span>Document</span></button>
-            <button class="grid-item" onclick="triggerFilePicker('audio/*')"><div class="icon-wrapper" style="background: #ff9800;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div><span>Audio</span></button>
-            <button class="grid-item" onclick="triggerLocation()"><div class="icon-wrapper" style="background: #4caf50;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div><span>Location</span></button>
-            <button class="grid-item" onclick="alert('Contact feature activated')"><div class="icon-wrapper" style="background: #00bcd4;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div><span>Contact</span></button>
-        </div>
-    </div>
-
-    <input type="file" id="cameraInput" accept="image/*" capture="environment">
-    <input type="file" id="photoInput" accept="image/*" multiple>
-    <input type="file" id="genericInput">
 
     <script>
-        let messages = JSON.parse(localStorage.getItem('zp_messages')) || [];
-        let systemVoices = [];
-        let activeUtterance = null;
-
-        function loadVoices() {
-            if ('speechSynthesis' in window) {
-                systemVoices = window.speechSynthesis.getVoices();
-            }
-        }
-        loadVoices();
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = loadVoices;
-        }
-
-        function speakText(text) {
-            try {
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    
-                    let cleanText = text.replace(/```[\s\S]*?```/g, 'Code block generated.')
-                                        .replace(/!\[.*?\]\(.*?\)/g, 'Generated image.')
-                                        .replace(/[*_#`~]/g, '')
-                                        .replace(/https?:\/\/\S+/g, '');
-
-                    activeUtterance = new SpeechSynthesisUtterance(cleanText);
-                    activeUtterance.rate = 1.0;
-                    activeUtterance.pitch = 1.0;
-
-                    if (systemVoices && systemVoices.length > 0) {
-                        let selectedVoice = systemVoices.find(v => v.lang.startsWith('en')) || systemVoices[0];
-                        if (selectedVoice) activeUtterance.voice = selectedVoice;
-                    }
-
-                    setTimeout(() => {
-                        window.speechSynthesis.speak(activeUtterance);
-                    }, 250);
-                }
-            } catch (err) {
-                console.log("Speech synthesis exception caught safely: ", err);
-            }
-        }
-
-        function renderMessages() {
-            const chatContainer = document.getElementById('chatContainer');
-            chatContainer.innerHTML = '';
-            messages.forEach(item => {
-                const msg = document.createElement('div');
-                msg.className = item.role === 'user' ? 'msg-user' : 'msg-ai';
-                
-                if (item.role === 'assistant') {
-                    let content = item.content.replace(/```([a-z]*)\s*/g, '\n```$1\n');
-                    msg.innerHTML = marked.parse(content);
-                } else {
-                    msg.innerText = item.content;
-                }
-                
-                chatContainer.appendChild(msg);
-            });
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-            updateHistoryList();
-        }
-
-        function updateHistoryList() {
-            const list = document.getElementById('historyList');
-            if (!list) return;
-            list.innerHTML = '';
-            messages.filter(m => m.role === 'user').forEach((item) => {
-                const li = document.createElement('li');
-                li.className = 'history-item';
-                li.innerText = item.content.length > 28 ? item.content.substring(0, 28) + '...' : item.content;
-                list.appendChild(li);
-            });
-        }
-
         async function sendMessage() {
-            const input = document.getElementById('userInput');
+            const input = document.getElementById('user-input');
+            const container = document.getElementById('chat-container');
             const text = input.value.trim();
             if (!text) return;
 
-            messages.push({ role: 'user', content: text });
-            localStorage.setItem('zp_messages', JSON.stringify(messages));
+            // Append user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user';
+            userDiv.textContent = text;
+            container.appendChild(userDiv);
             input.value = '';
-            renderMessages();
+            container.scrollTop = container.scrollHeight;
 
-            messages.push({ role: 'assistant', content: 'Thinking...' });
-            renderMessages();
+            // Append loading bot message
+            const botDiv = document.createElement('div');
+            botDiv.className = 'message bot';
+            botDiv.textContent = 'Thinking...';
+            container.appendChild(botDiv);
+            container.scrollTop = container.scrollHeight;
 
             try {
-                const response = await fetch('https://zion-prime-z.onrender.com/chat', {
+                const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: text })
+                    body: JSON.stringify({ message: text })
                 });
 
                 const data = await response.json();
-                messages.pop(); // Remove "Thinking..."
-
-                if (data && data.result) {
-                    messages.push({ role: 'assistant', content: data.result });
-                    renderMessages();
-                    speakText(data.result);
-                } else {
-                    let errMsg = 'No response received from server.';
-                    messages.push({ role: 'assistant', content: errMsg });
-                    renderMessages();
-                    speakText(errMsg);
-                }
+                botDiv.textContent = data.response || "Zion Prime Z active.";
             } catch (err) {
-                messages.pop();
-                let connErr = 'Connection error to backend.';
-                messages.push({ role: 'assistant', content: connErr });
-                renderMessages();
-                speakText(connErr);
+                botDiv.textContent = "Error connecting to server.";
             }
-
-            localStorage.setItem('zp_messages', JSON.stringify(messages));
+            container.scrollTop = container.scrollHeight;
         }
 
-        function clearCurrentChat() {
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            messages = [];
-            localStorage.removeItem('zp_messages');
-            renderMessages();
-        }
-
-        function createNewChat() {
-            clearCurrentChat();
-            toggleSidebar();
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-        }
-
-        function closeAll() {
-            document.getElementById('sidebar').classList.remove('active');
-            closeAttachmentSheet();
-            document.getElementById('overlay').style.display = 'none';
-        }
-
-        function openAttachmentSheet() {
-            document.getElementById('attachmentSheet').classList.add('active');
-            document.getElementById('overlay').style.display = 'block';
-        }
-
-        function closeAttachmentSheet() {
-            document.getElementById('attachmentSheet').classList.remove('active');
-        }
-
-        function triggerCamera() { closeAll(); document.getElementById('cameraInput').click(); }
-        function triggerPhotoLibrary() { closeAll(); document.getElementById('photoInput').click(); }
-        function triggerFilePicker(type) { closeAll(); const g = document.getElementById('genericInput'); g.accept = type; g.click(); }
-        function triggerLocation() {
-            closeAll();
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(p => alert(`Location: ${p.coords.latitude}, ${p.coords.longitude}`));
-            }
-        }
-
-        // Voice Recognition Setup with audio hardware conflict resolution
-        let recognition = null;
-        let isRecording = false;
-
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = true;
-
-            recognition.onresult = (e) => {
-                let txt = '';
-                for (let i = e.resultIndex; i < e.results.length; ++i) {
-                    txt += e.results[i][0].transcript;
-                }
-                document.getElementById('userInput').value = txt;
-            };
-
-            recognition.onend = () => {
-                isRecording = false;
-                const micBtn = document.getElementById('micBtn');
-                if (micBtn) micBtn.classList.remove('recording');
-            };
-
-            recognition.onerror = (event) => {
-                console.log("Speech recognition error: ", event.error);
-                isRecording = false;
-                const micBtn = document.getElementById('micBtn');
-                if (micBtn) micBtn.classList.remove('recording');
-            };
-        }
-
-        function toggleVoice() {
-            const micBtn = document.getElementById('micBtn');
-            if (!recognition) {
-                alert("Speech recognition is not supported on this browser.");
-                return;
-            }
-
-            if (isRecording) {
-                try {
-                    recognition.stop();
-                } catch (e) {}
-                isRecording = false;
-                if (micBtn) micBtn.classList.remove('recording');
-            } else {
-                // Free up the microphone audio hardware by canceling any active speech output
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                }
-                try {
-                    recognition.start();
-                    isRecording = true;
-                    if (micBtn) micBtn.classList.add('recording');
-                } catch (err) {
-                    console.log("Mic start error caught safely: ", err);
-                    isRecording = false;
-                    if (micBtn) micBtn.classList.remove('recording');
-                }
-            }
-        }
-
-        renderMessages();
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
     </script>
 </body>
 </html>
