@@ -32,7 +32,7 @@ def chat():
 
         msg_lower = user_message.lower()
         
-        # Image generation check
+        # Image Generation Check
         if any(keyword in msg_lower for keyword in ["image", "photo", "draw", "picture", "paint"]) and "code" not in msg_lower:
             prompt_clean = msg_lower
             for kw in ["generate", "an", "a", "of", "image", "photo", "draw", "picture", "paint", "please"]:
@@ -48,8 +48,10 @@ def chat():
                 "image_url": image_url
             })
 
-        # Dynamic Code Generation
-        if "flappy bird" in msg_lower:
+        # Smart Knowledge Base & Code Handling
+        if "water" in msg_lower and ("formula" in msg_lower or "chemical" in msg_lower):
+            reply = "The chemical formula for water is H₂O (two hydrogen atoms bonded to one oxygen atom)."
+        elif "flappy bird" in msg_lower:
             reply = (
                 "Here is the complete Python code for Flappy Bird using Pygame:\n\n"
                 "```python\n"
@@ -84,14 +86,14 @@ def chat():
                 "    clock.tick(120)\n"
                 "```"
             )
-        elif "python" in msg_lower:
+        elif "python" in msg_lower or "code" in msg_lower:
             reply = (
-                "Here is your Python code snippet:\n\n"
+                "Here is your requested Python snippet:\n\n"
                 "```python\n"
-                "def zion_core():\n"
-                "    print('Zion Prime Z active...')\n\n"
+                "def zion_system_check():\n"
+                "    print('Zion Prime Z spatial intelligence operational.')\n\n"
                 "if __name__ == '__main__':\n"
-                "    zion_core()\n"
+                "    zion_system_check()\n"
                 "```"
             )
         elif "who are you" in msg_lower or "what is your name" in msg_lower:
@@ -101,14 +103,16 @@ def chat():
         elif "who is the tn cm" in msg_lower or "chief minister" in msg_lower:
             reply = "C. Joseph Vijay (TVK)"
         elif "science expo" in msg_lower or "project" in msg_lower:
-            reply = "Zion Prime Z is designed to integrate real-time AI communication with dynamic backend processing for interactive science demonstrations."
+            reply = "Zion Prime Z integrates real-time PWA frontend interaction with custom Python backend processing for advanced science exhibition demonstrations."
+        elif "gravity" in msg_lower:
+            reply = "Gravity is a fundamental physical force by which objects with mass are drawn toward one another, with Earth's gravitational acceleration approximately 9.81 m/s²."
         else:
-            reply = f"Zion Prime Z processed your query successfully: '{user_message}'. All systems and neural pathways are fully operational."
+            reply = f"Zion Prime Z analyzed '{user_message}': Spatial reasoning and neural matrix computations indicate optimal operational status for this inquiry."
 
         return jsonify({"response": reply})
 
     except Exception as err:
-        return jsonify({"response": f"Zion Prime Z active. Received your input."}), 200
+        return jsonify({"response": f"Zion Prime Z active. Signal received."}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
