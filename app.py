@@ -48,13 +48,13 @@ def chat():
                 "image_url": image_url
             })
 
-        # 2. Greetings & Identity
+        # 2. Greetings, Identity & Elite Introduction
         if any(k in msg_lower for k in ["hi", "hello", "hey", "greetings"]):
             reply = "Hello! I am Zion Prime Z, your spatial intelligence assistant. How can I help you with our science expo demonstration today?"
-        elif any(k in msg_lower for k in ["who are you", "your name", "what are you"]):
-            reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
+        elif any(k in msg_lower for k in ["who are you", "your name", "what are you", "self introduction", "introduce yourself"]):
+            reply = "I am Zion Prime Z, an advanced PWA spatial intelligence and science assistant created by Master S. Joshua. I integrate real-time voice synthesis, dynamic UI history management, and custom Python processing to deliver instant answers across physics, chemistry, biology, and software engineering for exhibition demonstrations."
 
-        # 3. Chemistry (Clean Formulas & Reactions without dollar symbols)
+        # 3. Chemistry (Formulas & Reactions)
         elif "water" in msg_lower:
             reply = "Chemical Formula: H2O. Common Reaction/Process: Electrolysis of water breaks it down into hydrogen and oxygen (2H2O -> 2H2 + O2)."
         elif "ammonia" in msg_lower:
@@ -72,7 +72,7 @@ def chat():
         elif "formula" in msg_lower or "chemical" in msg_lower:
             reply = f"Zion Prime Z Chemistry Database: For '{user_message}', standard chemical composition analysis applies stoichiometric balance laws for precise molecular identification."
 
-        # 4. Physics Terms & Laws (Clean text)
+        # 4. Physics Terms & Laws
         elif "gravity" in msg_lower or "gravitational" in msg_lower:
             reply = "Physics Concept: Universal Gravitation (F = G * (m1 * m2) / r²). Earth's standard gravitational acceleration is approximately 9.81 m/s²."
         elif "ohm" in msg_lower or "voltage" in msg_lower or "current" in msg_lower:
@@ -84,7 +84,7 @@ def chat():
         elif "energy" in msg_lower or "power" in msg_lower:
             reply = "Physics Principle: Conservation of Energy (E = mc² or Kinetic/Potential energy transfer). Power is work done per unit time (P = W / t)."
 
-        # 5. Biology Terms & Concepts (Clean text)
+        # 5. Biology Terms & Concepts
         elif "photosynthesis" in msg_lower:
             reply = "Biology Process: Photosynthesis (6CO2 + 6H2O + Light -> C6H12O6 + 6O2), used by plants to convert light energy into chemical energy."
         elif "mitochondria" in msg_lower:
