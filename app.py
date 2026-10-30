@@ -32,7 +32,7 @@ def chat():
 
         msg_lower = user_message.lower()
         
-        # 1. Image Generation Routing
+        # 1. Dynamic Image Generation Routing
         if any(kw in msg_lower for kw in ["image", "photo", "draw", "picture", "paint"]) and "code" not in msg_lower:
             prompt_clean = msg_lower
             for kw in ["generate", "an", "a", "of", "image", "photo", "draw", "picture", "paint", "please"]:
@@ -48,7 +48,7 @@ def chat():
                 "image_url": image_url
             })
 
-        # 2. Greetings, Identity & Expo Database
+        # 2. Greetings, Identity & Expo Highlights
         if any(k in msg_lower for k in ["roadster", "roadster 2", "spacex", "falcon heavy", "space experiment"]):
             reply = "Experiment Overview: Elon Musk's Tesla Roadster was launched into heliocentric orbit via the SpaceX Falcon Heavy test flight. It acts as a dummy payload demonstrating orbital mechanics, escape velocity, and long-term space environment durability."
         elif any(k in msg_lower for k in ["hi", "hello", "hey", "greetings"]):
@@ -56,7 +56,7 @@ def chat():
         elif any(k in msg_lower for k in ["who are you", "your name", "what are you", "self introduction", "introduce yourself"]):
             reply = "I am Zion Prime Z, an advanced PWA spatial intelligence and science assistant created by Master S. Joshua. I integrate real-time voice synthesis, dynamic UI history management, and custom Python processing to deliver instant answers across physics, chemistry, biology, and software engineering for exhibition demonstrations."
 
-        # 3. Specific Games / Custom Coding Triggers
+        # 3. Specific Games / Dedicated Coding
         elif "flappy bird" in msg_lower:
             reply = (
                 "Here is the complete Python code for Flappy Bird using Pygame:\n\n"
@@ -93,7 +93,7 @@ def chat():
                 "```"
             )
 
-        # 4. Universal Code Engine (Catch-all for any other coding request)
+        # 4. Universal Code Engine (Catch-all for any other coding query)
         elif any(k in msg_lower for k in ["code", "script", "program", "function", "coding", "python", "html", "css", "javascript", "algorithm"]):
             reply = (
                 f"Here is a complete operational code implementation for '{user_message}':\n\n"
@@ -112,15 +112,52 @@ def chat():
                 "```"
             )
 
-        # 5. Chemistry, Physics, Biology & Leaders
+        # 5. Specific Chemistry, Physics & Biology Entries
         elif "water" in msg_lower:
             reply = "Chemical Formula: H2O. Common Reaction/Process: Electrolysis of water breaks it down into hydrogen and oxygen (2H2O -> 2H2 + O2)."
         elif "ammonia" in msg_lower:
             reply = "Chemical Formula: NH3. Common Reaction Name: Haber Process (N2 + 3H2 <-> 2NH3) used for industrial synthesis."
+        elif "salt" in msg_lower or "sodium chloride" in msg_lower:
+            reply = "Chemical Formula: NaCl. Common Reaction Name: Neutralization reaction (HCl + NaOH -> NaCl + H2O)."
+        elif "carbon dioxide" in msg_lower:
+            reply = "Chemical Formula: CO2. Common Reaction Name: Combustion or Respiration byproduct."
+        elif "sulfuric acid" in msg_lower:
+            reply = "Chemical Formula: H2SO4. Known as the 'King of Chemicals', widely used in contact process manufacturing."
+        elif "methane" in msg_lower:
+            reply = "Chemical Formula: CH4. Common Reaction Name: Combustion (CH4 + 2O2 -> CO2 + 2H2O)."
+        elif "hydrochloric acid" in msg_lower:
+            reply = "Chemical Formula: HCl. Strong acid commonly used in laboratory synthesis and gastric digestion."
         elif "gravity" in msg_lower or "gravitational" in msg_lower:
             reply = "Physics Concept: Universal Gravitation (F = G * (m1 * m2) / r²). Earth's standard gravitational acceleration is approximately 9.81 m/s²."
+        elif "ohm" in msg_lower or "voltage" in msg_lower or "current" in msg_lower:
+            reply = "Physics Law: Ohm's Law (V = I * R), defining the relationship between voltage (V), current (I), and resistance (R)."
+        elif "newton" in msg_lower or "force" in msg_lower:
+            reply = "Physics Laws: Newton's Laws of Motion. 1st: Inertia; 2nd: Force equals mass times acceleration (F = ma); 3rd: Action and reaction are equal and opposite."
+        elif "velocity" in msg_lower or "speed" in msg_lower or "acceleration" in msg_lower:
+            reply = "Physics Kinematics: Acceleration is the rate of change of velocity (a = (v - u) / t), measured in m/s²."
+        elif "energy" in msg_lower or "power" in msg_lower:
+            reply = "Physics Principle: Conservation of Energy (E = mc² or Kinetic/Potential energy transfer). Power is work done per unit time (P = W / t)."
         elif "photosynthesis" in msg_lower:
             reply = "Biology Process: Photosynthesis (6CO2 + 6H2O + Light -> C6H12O6 + 6O2), used by plants to convert light energy into chemical energy."
+        elif "mitochondria" in msg_lower:
+            reply = "Biology Term: Mitochondria is known as the 'powerhouse of the cell', responsible for generating chemical energy in the form of ATP."
+        elif "dna" in msg_lower or "rna" in msg_lower:
+            reply = "Biology Term: Deoxyribonucleic Acid (DNA) is a double-helix molecule carrying genetic instructions for the development, functioning, and reproduction of all living organisms."
+        elif "osmosis" in msg_lower or "diffusion" in msg_lower:
+            reply = "Biology Process: Osmosis is the movement of water molecules across a selectively permeable membrane from an area of higher water potential to lower water potential."
+        elif "cell" in msg_lower:
+            reply = "Biology Term: The cell is the basic structural, functional, and biological unit of all known living organisms."
+
+        # 6. Universal Science & Mechanism Engine (Catch-all for any other scientific query)
+        elif any(k in msg_lower for k in ["explain", "how does", "mechanism", "working", "principle", "science", "process", "reaction", "law", "experiment", "formula", "chemical"]):
+            reply = (
+                f"Scientific Analysis for '{user_message}':\n\n"
+                f"1. Core Principle: The process operates under fundamental physical laws and chemical conservation principles.\n"
+                f"2. Mechanism: System dynamics undergo state transformations driven by potential energy and thermodynamic gradients, establishing stoichiometric balance across intermediate states.\n"
+                f"3. Practical Impact: This mechanism serves as a primary scientific foundation for advanced engineering and technological implementations."
+            )
+
+        # 7. Leaders & Fallback
         elif any(k in msg_lower for k in ["president", "usa", "united states", "america"]):
             reply = "Donald Trump"
         elif any(k in msg_lower for k in ["cm of tamil nadu", "chief minister of tamil nadu", "tamil nadu cm", "who is the cm"]):
