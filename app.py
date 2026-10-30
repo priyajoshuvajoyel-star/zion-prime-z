@@ -48,7 +48,7 @@ def chat():
                 "image_url": image_url
             })
 
-        # 2. Science Expo & Experiment Database (Roadster 2 & Space Tests)
+        # 2. Greetings, Identity & Expo Database
         if any(k in msg_lower for k in ["roadster", "roadster 2", "spacex", "falcon heavy", "space experiment"]):
             reply = "Experiment Overview: Elon Musk's Tesla Roadster was launched into heliocentric orbit via the SpaceX Falcon Heavy test flight. It acts as a dummy payload demonstrating orbital mechanics, escape velocity, and long-term space environment durability."
         elif any(k in msg_lower for k in ["hi", "hello", "hey", "greetings"]):
@@ -56,49 +56,7 @@ def chat():
         elif any(k in msg_lower for k in ["who are you", "your name", "what are you", "self introduction", "introduce yourself"]):
             reply = "I am Zion Prime Z, an advanced PWA spatial intelligence and science assistant created by Master S. Joshua. I integrate real-time voice synthesis, dynamic UI history management, and custom Python processing to deliver instant answers across physics, chemistry, biology, and software engineering for exhibition demonstrations."
 
-        # 3. Chemistry (Formulas & Reactions)
-        elif "water" in msg_lower:
-            reply = "Chemical Formula: H2O. Common Reaction/Process: Electrolysis of water breaks it down into hydrogen and oxygen (2H2O -> 2H2 + O2)."
-        elif "ammonia" in msg_lower:
-            reply = "Chemical Formula: NH3. Common Reaction Name: Haber Process (N2 + 3H2 <-> 2NH3) used for industrial synthesis."
-        elif "salt" in msg_lower or "sodium chloride" in msg_lower:
-            reply = "Chemical Formula: NaCl. Common Reaction Name: Neutralization reaction (HCl + NaOH -> NaCl + H2O)."
-        elif "carbon dioxide" in msg_lower:
-            reply = "Chemical Formula: CO2. Common Reaction Name: Combustion or Respiration byproduct."
-        elif "sulfuric acid" in msg_lower:
-            reply = "Chemical Formula: H2SO4. Known as the 'King of Chemicals', widely used in contact process manufacturing."
-        elif "methane" in msg_lower:
-            reply = "Chemical Formula: CH4. Common Reaction Name: Combustion (CH4 + 2O2 -> CO2 + 2H2O)."
-        elif "hydrochloric acid" in msg_lower:
-            reply = "Chemical Formula: HCl. Strong acid commonly used in laboratory synthesis and gastric digestion."
-        elif "formula" in msg_lower or "chemical" in msg_lower:
-            reply = f"Zion Prime Z Chemistry Database: For '{user_message}', standard chemical composition analysis applies stoichiometric balance laws for precise molecular identification."
-
-        # 4. Physics Terms & Laws
-        elif "gravity" in msg_lower or "gravitational" in msg_lower:
-            reply = "Physics Concept: Universal Gravitation (F = G * (m1 * m2) / r²). Earth's standard gravitational acceleration is approximately 9.81 m/s²."
-        elif "ohm" in msg_lower or "voltage" in msg_lower or "current" in msg_lower:
-            reply = "Physics Law: Ohm's Law (V = I * R), defining the relationship between voltage (V), current (I), and resistance (R)."
-        elif "newton" in msg_lower or "force" in msg_lower:
-            reply = "Physics Laws: Newton's Laws of Motion. 1st: Inertia; 2nd: Force equals mass times acceleration (F = ma); 3rd: Action and reaction are equal and opposite."
-        elif "velocity" in msg_lower or "speed" in msg_lower or "acceleration" in msg_lower:
-            reply = "Physics Kinematics: Acceleration is the rate of change of velocity (a = (v - u) / t), measured in m/s²."
-        elif "energy" in msg_lower or "power" in msg_lower:
-            reply = "Physics Principle: Conservation of Energy (E = mc² or Kinetic/Potential energy transfer). Power is work done per unit time (P = W / t)."
-
-        # 5. Biology Terms & Concepts
-        elif "photosynthesis" in msg_lower:
-            reply = "Biology Process: Photosynthesis (6CO2 + 6H2O + Light -> C6H12O6 + 6O2), used by plants to convert light energy into chemical energy."
-        elif "mitochondria" in msg_lower:
-            reply = "Biology Term: Mitochondria is known as the 'powerhouse of the cell', responsible for generating chemical energy in the form of ATP."
-        elif "dna" in msg_lower or "rna" in msg_lower:
-            reply = "Biology Term: Deoxyribonucleic Acid (DNA) is a double-helix molecule carrying genetic instructions for the development, functioning, and reproduction of all living organisms."
-        elif "osmosis" in msg_lower or "diffusion" in msg_lower:
-            reply = "Biology Process: Osmosis is the movement of water molecules across a selectively permeable membrane from an area of higher water potential to lower water potential."
-        elif "cell" in msg_lower:
-            reply = "Biology Term: The cell is the basic structural, functional, and biological unit of all known living organisms."
-
-        # 6. Coding & Projects
+        # 3. Specific Games / Custom Coding Triggers
         elif "flappy bird" in msg_lower:
             reply = (
                 "Here is the complete Python code for Flappy Bird using Pygame:\n\n"
@@ -134,24 +92,39 @@ def chat():
                 "    clock.tick(120)\n"
                 "```"
             )
-        elif "python" in msg_lower or "code" in msg_lower:
+
+        # 4. Universal Code Engine (Catch-all for any other coding request)
+        elif any(k in msg_lower for k in ["code", "script", "program", "function", "coding", "python", "html", "css", "javascript", "algorithm"]):
             reply = (
-                "Here is your requested Python script:\n\n"
+                f"Here is a complete operational code implementation for '{user_message}':\n\n"
                 "```python\n"
-                "def zion_core_execute():\n"
-                "    print('Zion Prime Z spatial intelligence active.')\n\n"
+                "# Zion Prime Z Core Execution Engine\n"
+                "import time\n"
+                "import math\n\n"
+                "def execute_task(input_data):\n"
+                "    \"\"\"Processes task query through Zion spatial matrix\"\"\"\n"
+                "    print(f'[ZION CORE] Processing: {input_data}')\n"
+                "    status = {'status': 'success', 'code': 200, 'matrix_active': True}\n"
+                "    return status\n\n"
                 "if __name__ == '__main__':\n"
-                "    zion_core_execute()\n"
+                "    result = execute_task('User Request Verified')\n"
+                "    print('Execution Output:', result)\n"
                 "```"
             )
 
-        # 7. General Knowledge & Leaders
+        # 5. Chemistry, Physics, Biology & Leaders
+        elif "water" in msg_lower:
+            reply = "Chemical Formula: H2O. Common Reaction/Process: Electrolysis of water breaks it down into hydrogen and oxygen (2H2O -> 2H2 + O2)."
+        elif "ammonia" in msg_lower:
+            reply = "Chemical Formula: NH3. Common Reaction Name: Haber Process (N2 + 3H2 <-> 2NH3) used for industrial synthesis."
+        elif "gravity" in msg_lower or "gravitational" in msg_lower:
+            reply = "Physics Concept: Universal Gravitation (F = G * (m1 * m2) / r²). Earth's standard gravitational acceleration is approximately 9.81 m/s²."
+        elif "photosynthesis" in msg_lower:
+            reply = "Biology Process: Photosynthesis (6CO2 + 6H2O + Light -> C6H12O6 + 6O2), used by plants to convert light energy into chemical energy."
         elif any(k in msg_lower for k in ["president", "usa", "united states", "america"]):
             reply = "Donald Trump"
         elif any(k in msg_lower for k in ["cm of tamil nadu", "chief minister of tamil nadu", "tamil nadu cm", "who is the cm"]):
             reply = "C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu."
-        elif "science expo" in msg_lower or "project" in msg_lower:
-            reply = "Zion Prime Z integrates real-time PWA frontend interaction with custom Python backend processing for advanced science exhibition demonstrations."
         else:
             reply = f"Zion Prime Z Science Matrix: Regarding '{user_message}', local neural analysis confirms core scientific consistency and optimal execution parameters."
 
