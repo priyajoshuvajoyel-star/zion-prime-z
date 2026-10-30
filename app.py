@@ -48,8 +48,10 @@ def chat():
                 "image_url": image_url
             })
 
-        # 2. Greetings, Identity & Elite Introduction
-        if any(k in msg_lower for k in ["hi", "hello", "hey", "greetings"]):
+        # 2. Science Expo & Experiment Database (Roadster 2 & Space Tests)
+        if any(k in msg_lower for k in ["roadster", "roadster 2", "spacex", "falcon heavy", "space experiment"]):
+            reply = "Experiment Overview: Elon Musk's Tesla Roadster was launched into heliocentric orbit via the SpaceX Falcon Heavy test flight. It acts as a dummy payload demonstrating orbital mechanics, escape velocity, and long-term space environment durability."
+        elif any(k in msg_lower for k in ["hi", "hello", "hey", "greetings"]):
             reply = "Hello! I am Zion Prime Z, your spatial intelligence assistant. How can I help you with our science expo demonstration today?"
         elif any(k in msg_lower for k in ["who are you", "your name", "what are you", "self introduction", "introduce yourself"]):
             reply = "I am Zion Prime Z, an advanced PWA spatial intelligence and science assistant created by Master S. Joshua. I integrate real-time voice synthesis, dynamic UI history management, and custom Python processing to deliver instant answers across physics, chemistry, biology, and software engineering for exhibition demonstrations."
