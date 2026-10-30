@@ -54,41 +54,41 @@ def chat():
         elif any(k in msg_lower for k in ["who are you", "your name", "what are you"]):
             reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
 
-        # 3. Comprehensive Chemistry (Formulas & Reactions)
+        # 3. Chemistry (Clean Formulas & Reactions without dollar symbols)
         elif "water" in msg_lower:
-            reply = "Chemical Formula: H₂O. Common Reaction/Process: Electrolysis of water breaks it down into hydrogen ($2H_2O \\rightarrow 2H_2 + O_2$)."
+            reply = "Chemical Formula: H2O. Common Reaction/Process: Electrolysis of water breaks it down into hydrogen and oxygen (2H2O -> 2H2 + O2)."
         elif "ammonia" in msg_lower:
-            reply = "Chemical Formula: NH₃. Common Reaction Name: Haber Process ($N_2 + 3H_2 \\rightleftharpoons 2NH_3$) used for industrial synthesis."
+            reply = "Chemical Formula: NH3. Common Reaction Name: Haber Process (N2 + 3H2 <-> 2NH3) used for industrial synthesis."
         elif "salt" in msg_lower or "sodium chloride" in msg_lower:
-            reply = "Chemical Formula: NaCl. Common Reaction Name: Neutralization reaction ($HCl + NaOH \\rightarrow NaCl + H_2O$)."
+            reply = "Chemical Formula: NaCl. Common Reaction Name: Neutralization reaction (HCl + NaOH -> NaCl + H2O)."
         elif "carbon dioxide" in msg_lower:
-            reply = "Chemical Formula: CO₂. Common Reaction Name: Combustion or Respiration byproduct."
+            reply = "Chemical Formula: CO2. Common Reaction Name: Combustion or Respiration byproduct."
         elif "sulfuric acid" in msg_lower:
-            reply = "Chemical Formula: H₂SO₄. Known as the 'King of Chemicals', widely used in contact process manufacturing."
+            reply = "Chemical Formula: H2SO4. Known as the 'King of Chemicals', widely used in contact process manufacturing."
         elif "methane" in msg_lower:
-            reply = "Chemical Formula: CH₄. Common Reaction Name: Combustion ($CH_2 + 2O_2 \\rightarrow CO_2 + 2H_2O$)."
+            reply = "Chemical Formula: CH4. Common Reaction Name: Combustion (CH4 + 2O2 -> CO2 + 2H2O)."
         elif "hydrochloric acid" in msg_lower:
             reply = "Chemical Formula: HCl. Strong acid commonly used in laboratory synthesis and gastric digestion."
         elif "formula" in msg_lower or "chemical" in msg_lower:
             reply = f"Zion Prime Z Chemistry Database: For '{user_message}', standard chemical composition analysis applies stoichiometric balance laws for precise molecular identification."
 
-        # 4. Physics Terms & Laws
+        # 4. Physics Terms & Laws (Clean text)
         elif "gravity" in msg_lower or "gravitational" in msg_lower:
-            reply = "Physics Concept: Universal Gravitation ($F = G \\frac{m_1 m_2}{r^2}$). Earth's standard gravitational acceleration is approximately $9.81 \\text{ m/s}^2$."
+            reply = "Physics Concept: Universal Gravitation (F = G * (m1 * m2) / r²). Earth's standard gravitational acceleration is approximately 9.81 m/s²."
         elif "ohm" in msg_lower or "voltage" in msg_lower or "current" in msg_lower:
-            reply = "Physics Law: Ohm's Law ($V = I \\times R$), defining the relationship between voltage ($V$), current ($I$), and resistance ($R$)."
+            reply = "Physics Law: Ohm's Law (V = I * R), defining the relationship between voltage (V), current (I), and resistance (R)."
         elif "newton" in msg_lower or "force" in msg_lower:
-            reply = "Physics Laws: Newton's Laws of Motion. 1st: Inertia; 2nd: Force equals mass times acceleration ($F = ma$); 3rd: Action and reaction are equal and opposite."
+            reply = "Physics Laws: Newton's Laws of Motion. 1st: Inertia; 2nd: Force equals mass times acceleration (F = ma); 3rd: Action and reaction are equal and opposite."
         elif "velocity" in msg_lower or "speed" in msg_lower or "acceleration" in msg_lower:
-            reply = "Physics Kinematics: Acceleration is the rate of change of velocity ($a = \\frac{v - u}{t}$), measured in $\\text{m/s}^2$."
+            reply = "Physics Kinematics: Acceleration is the rate of change of velocity (a = (v - u) / t), measured in m/s²."
         elif "energy" in msg_lower or "power" in msg_lower:
-            reply = "Physics Principle: Conservation of Energy ($E = mc^2$ or Kinetic/Potential energy transfer). Power is work done per unit time ($P = \\frac{W}{t}$)."
+            reply = "Physics Principle: Conservation of Energy (E = mc² or Kinetic/Potential energy transfer). Power is work done per unit time (P = W / t)."
 
-        # 5. Biology Terms & Concepts
+        # 5. Biology Terms & Concepts (Clean text)
         elif "photosynthesis" in msg_lower:
-            reply = "Biology Process: Photosynthesis ($6CO_2 + 6H_2O + \\text{Light} \\rightarrow C_6H_{12}O_6 + 6O_2$), used by plants to convert light energy into chemical energy."
+            reply = "Biology Process: Photosynthesis (6CO2 + 6H2O + Light -> C6H12O6 + 6O2), used by plants to convert light energy into chemical energy."
         elif "mitochondria" in msg_lower:
-            reply = "Biology Term: Mitochondria is known as the 'powerhouse of the cell', responsible for generating chemical energy in the form of ATP (Adenosine Triphosphate)."
+            reply = "Biology Term: Mitochondria is known as the 'powerhouse of the cell', responsible for generating chemical energy in the form of ATP."
         elif "dna" in msg_lower or "rna" in msg_lower:
             reply = "Biology Term: Deoxyribonucleic Acid (DNA) is a double-helix molecule carrying genetic instructions for the development, functioning, and reproduction of all living organisms."
         elif "osmosis" in msg_lower or "diffusion" in msg_lower:
@@ -143,7 +143,7 @@ def chat():
                 "```"
             )
 
-        # 7. General Knowledge (Politics, Leaders, etc.)
+        # 7. General Knowledge & Leaders
         elif any(k in msg_lower for k in ["president", "usa", "united states", "america"]):
             reply = "Donald Trump"
         elif any(k in msg_lower for k in ["cm of tamil nadu", "chief minister of tamil nadu", "tamil nadu cm", "who is the cm"]):
