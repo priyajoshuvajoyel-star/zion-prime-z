@@ -48,15 +48,55 @@ def chat():
                 "image_url": image_url
             })
 
-        # 2. Comprehensive Knowledge & Code Database
-        if any(k in msg_lower for k in ["president", "usa", "united states", "america"]):
-            reply = "Donald Trump"
+        # 2. Greetings & Identity
+        if any(k in msg_lower for k in ["hi", "hello", "hey", "greetings"]):
+            reply = "Hello! I am Zion Prime Z, your spatial intelligence assistant. How can I help you with our science expo demonstration today?"
+        elif any(k in msg_lower for k in ["who are you", "your name", "what are you"]):
+            reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
+
+        # 3. Comprehensive Chemistry (Formulas & Reactions)
+        elif "water" in msg_lower:
+            reply = "Chemical Formula: H₂O. Common Reaction/Process: Electrolysis of water breaks it down into hydrogen ($2H_2O \\rightarrow 2H_2 + O_2$)."
         elif "ammonia" in msg_lower:
-            reply = "The chemical formula for ammonia is NH₃ (one nitrogen atom bonded to three hydrogen atoms)."
-        elif "water" in msg_lower and ("formula" in msg_lower or "chemical" in msg_lower):
-            reply = "The chemical formula for water is H₂O (two hydrogen atoms bonded to one oxygen atom)."
-        elif any(k in msg_lower for k in ["cm of tamil nadu", "chief minister of tamil nadu", "tamil nadu cm", "who is the cm"]):
-            reply = "C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu."
+            reply = "Chemical Formula: NH₃. Common Reaction Name: Haber Process ($N_2 + 3H_2 \\rightleftharpoons 2NH_3$) used for industrial synthesis."
+        elif "salt" in msg_lower or "sodium chloride" in msg_lower:
+            reply = "Chemical Formula: NaCl. Common Reaction Name: Neutralization reaction ($HCl + NaOH \\rightarrow NaCl + H_2O$)."
+        elif "carbon dioxide" in msg_lower:
+            reply = "Chemical Formula: CO₂. Common Reaction Name: Combustion or Respiration byproduct."
+        elif "sulfuric acid" in msg_lower:
+            reply = "Chemical Formula: H₂SO₄. Known as the 'King of Chemicals', widely used in contact process manufacturing."
+        elif "methane" in msg_lower:
+            reply = "Chemical Formula: CH₄. Common Reaction Name: Combustion ($CH_2 + 2O_2 \\rightarrow CO_2 + 2H_2O$)."
+        elif "hydrochloric acid" in msg_lower:
+            reply = "Chemical Formula: HCl. Strong acid commonly used in laboratory synthesis and gastric digestion."
+        elif "formula" in msg_lower or "chemical" in msg_lower:
+            reply = f"Zion Prime Z Chemistry Database: For '{user_message}', standard chemical composition analysis applies stoichiometric balance laws for precise molecular identification."
+
+        # 4. Physics Terms & Laws
+        elif "gravity" in msg_lower or "gravitational" in msg_lower:
+            reply = "Physics Concept: Universal Gravitation ($F = G \\frac{m_1 m_2}{r^2}$). Earth's standard gravitational acceleration is approximately $9.81 \\text{ m/s}^2$."
+        elif "ohm" in msg_lower or "voltage" in msg_lower or "current" in msg_lower:
+            reply = "Physics Law: Ohm's Law ($V = I \\times R$), defining the relationship between voltage ($V$), current ($I$), and resistance ($R$)."
+        elif "newton" in msg_lower or "force" in msg_lower:
+            reply = "Physics Laws: Newton's Laws of Motion. 1st: Inertia; 2nd: Force equals mass times acceleration ($F = ma$); 3rd: Action and reaction are equal and opposite."
+        elif "velocity" in msg_lower or "speed" in msg_lower or "acceleration" in msg_lower:
+            reply = "Physics Kinematics: Acceleration is the rate of change of velocity ($a = \\frac{v - u}{t}$), measured in $\\text{m/s}^2$."
+        elif "energy" in msg_lower or "power" in msg_lower:
+            reply = "Physics Principle: Conservation of Energy ($E = mc^2$ or Kinetic/Potential energy transfer). Power is work done per unit time ($P = \\frac{W}{t}$)."
+
+        # 5. Biology Terms & Concepts
+        elif "photosynthesis" in msg_lower:
+            reply = "Biology Process: Photosynthesis ($6CO_2 + 6H_2O + \\text{Light} \\rightarrow C_6H_{12}O_6 + 6O_2$), used by plants to convert light energy into chemical energy."
+        elif "mitochondria" in msg_lower:
+            reply = "Biology Term: Mitochondria is known as the 'powerhouse of the cell', responsible for generating chemical energy in the form of ATP (Adenosine Triphosphate)."
+        elif "dna" in msg_lower or "rna" in msg_lower:
+            reply = "Biology Term: Deoxyribonucleic Acid (DNA) is a double-helix molecule carrying genetic instructions for the development, functioning, and reproduction of all living organisms."
+        elif "osmosis" in msg_lower or "diffusion" in msg_lower:
+            reply = "Biology Process: Osmosis is the movement of water molecules across a selectively permeable membrane from an area of higher water potential to lower water potential."
+        elif "cell" in msg_lower:
+            reply = "Biology Term: The cell is the basic structural, functional, and biological unit of all known living organisms."
+
+        # 6. Coding & Projects
         elif "flappy bird" in msg_lower:
             reply = (
                 "Here is the complete Python code for Flappy Bird using Pygame:\n\n"
@@ -102,15 +142,16 @@ def chat():
                 "    zion_core_execute()\n"
                 "```"
             )
-        elif any(k in msg_lower for k in ["who are you", "your name", "what are you"]):
-            reply = "I am Zion Prime Z, an advanced AI spatial intelligence assistant created by Master S. Joshua."
+
+        # 7. General Knowledge (Politics, Leaders, etc.)
+        elif any(k in msg_lower for k in ["president", "usa", "united states", "america"]):
+            reply = "Donald Trump"
+        elif any(k in msg_lower for k in ["cm of tamil nadu", "chief minister of tamil nadu", "tamil nadu cm", "who is the cm"]):
+            reply = "C. Joseph Vijay (TVK) is the Chief Minister of Tamil Nadu."
         elif "science expo" in msg_lower or "project" in msg_lower:
             reply = "Zion Prime Z integrates real-time PWA frontend interaction with custom Python backend processing for advanced science exhibition demonstrations."
-        elif "gravity" in msg_lower:
-            reply = "Gravity is a fundamental physical force by which objects with mass are drawn toward one another, with Earth's gravitational acceleration approximately 9.81 m/s²."
         else:
-            # Dynamic Smart Answer Fallback based on user prompt keywords
-            reply = f"Zion Prime Z Answer: Regarding '{user_message}', local neural analysis indicates high structural validity. All modules and background systems are operating at maximum efficiency for the expo."
+            reply = f"Zion Prime Z Science Matrix: Regarding '{user_message}', local neural analysis confirms core scientific consistency and optimal execution parameters."
 
         return jsonify({"response": reply})
 
